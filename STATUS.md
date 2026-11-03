@@ -1,19 +1,19 @@
 # STATUS：现在到底验了什么
 
-自动生成于 2026-11-03 09:56（`tools/status.py`）。**这张表不靠记忆，靠跑**——重跑一次就对得上。
+自动生成于 2026-11-03 12:06（`tools/status.py`）。**这张表不靠记忆，靠跑**——重跑一次就对得上。
 
-一句话：离线可验的部分全过；真模型也跑过了（见下表）。
+一句话：离线可验的部分有失败；真模型也跑过了（见下表）。
 
 ## 已验证
 
 | 声称 | 怎么验的 | 结果 |
 |---|---|---|
-| 单元测试全过 | `pytest tests -q` | ✅ 223 passed |
+| 单元测试全过 | `pytest tests -q` | ✅ 231 passed |
 | 八字黄金集不漂 | `tools/golden.py --check` | ✅ 41 例一致 |
 | 六壬/奇门/紫微快照不漂 | `tools/golden_plates.py --check` | ✅ 9 条一致 |
 | 隐私承诺实测 | `tools/verify_privacy.py`（起真服务、读真文件） | ✅ 11/11 通过 |
 | 文档里的接口例子能跑通 | `tools/api_smoke.py`（需要服务在跑） | ✅ 18 个例子，失败 0 |
-| 真模型 50 轮（守则 + 对账） | `tools/eval_p1.py` → `tools/recheck.py p1-20261103-093102.jsonl` | ✅ 通过：拦截 0、对账 0；p50 3361ms |
+| 真模型 50 轮（守则 + 对账） | `tools/eval_p1.py` → `tools/recheck.py p1-20261103-120213.jsonl` | ⚠️ 有拦截或对账不符；p50 3630ms |
 
 ## 未验证（不是忘了，是没法自己验）
 
@@ -28,7 +28,7 @@
 ## 现在有什么
 
 - 页面 11 个：`calendar.html`、`corrections.html`、`guide.html`、`index.html`、`liuren.html`、`plate.html`、`qimen.html`、`qimen3d.html`、`samples.html`、`year.html`、`ziwei.html`
-- 接口 20 条（`/api/docs` 可试）
+- 接口 23 条（`/api/docs` 可试）
 - 典籍数据 6 份：`dunjiayanyi.json`、`liurendaquan-bifa.json`、`qiongtong.json`、`shenfeng.json`、`ziping.json`、`ziweiquanshu-gong.json`
 
 ## 怎么重跑

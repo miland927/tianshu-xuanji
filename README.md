@@ -1,14 +1,18 @@
 > **本地版本说明**：这个仓库在本机被扩展成了一台可用的「读时间仪器」——加了 FastAPI 后端、
-> 璇玑面板（接 DeepSeek）、四门盘（六壬 / 奇门 / 紫微）、节气历、年度报告，
+> 璇玑面板（接 DeepSeek，可网页配 key）、四门盘（六壬 / 奇门 / 紫微）、节气历、年度报告，
 > 以及四门典籍原文的段落级引用。
 >
+> - **换台电脑跑起来**：[HANDOFF.md](HANDOFF.md)
+> - **每一轮做了什么**：[ROUNDS.md](ROUNDS.md)
 > - 用法与入口：[guide.html](guide.html)（启动后访问 `/guide.html`）
 > - 它长什么样：[samples.html](samples.html)（从真模型 50 轮里原样摘的）
 > - 现在到底验了什么：[STATUS.md](STATUS.md)（自动生成，未验的单独列出）
 > - 接口文档：`/api/docs`（Swagger）　接口目录：`/api`　schema：`/api/openapi.json`
 > - 照着接一遍：[API.md](API.md)（例子都真跑过：`tools/api_smoke.py`）
-> - 开发笔记：[LOCAL.md](LOCAL.md)　改造清单与现状：[ROADMAP.md](ROADMAP.md)　换镜头设计：[PLATES.md](PLATES.md)
+> - 路线图：[ROADMAP.md](ROADMAP.md)　换镜头设计：[PLATES.md](PLATES.md)　勘误：[CORRECTIONS.md](CORRECTIONS.md)
 > - 快检：`.venv/Scripts/python.exe tools/check.py`
+>
+> 截图在 [`docs/shots/`](docs/shots/)。
 >
 > 下面仍是上游引擎的原始说明。
 

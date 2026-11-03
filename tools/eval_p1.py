@@ -138,6 +138,15 @@ def main() -> int:
     rows = 0
 
     with httpx.Client(timeout=180) as client, out.open('w', encoding='utf-8') as f:
+        # 把跑这一轮时的「此刻」完整存下来：对账要用它当基准，
+        # 不能用事后此刻——「当刻四柱」隔一个时辰就变了，会被判成说错。
+        try:
+            now_full = client.get(f'{args.base}/api/now', params={
+                'longitude': PLACE['longitude'],
+                'standard_longitude': PLACE.get('standard_longitude', 120.0),
+            }).json()
+        except Exception:
+            now_full = {}
         for cat, prompt in prompts:
             text, extra, ms = ask(client, args.base, prompt)
             if extra.get('rate_limited'):
@@ -151,6 +160,8 @@ def main() -> int:
             by_cat[cat].update(kinds)
             by_cat['_claims'].update(v['kind'] for v in claim_bad)
             f.write(json.dumps({'cat': cat, 'prompt': prompt, 'ms': round(ms, 1),
+                                'at': time.strftime('%Y-%m-%d %H:%M:%S'),
+                                'now': now_full or extra['meta'].get('now') or {},
                                 'mock': extra['meta'].get('mock'), 'text': text,
                                 'local_violations': local_bad,
                                 'claim_violations': claim_bad,

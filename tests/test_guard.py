@@ -100,6 +100,12 @@ def test_real_model_explanations_are_not_violations():
         assert bad == [], (text, bad)
 
 
+def test_quoting_an_old_superstition_is_not_endorsing_it():
+    # 真模型解释「伤官」时照录了古书的「克夫」，同时说明那是旧说
+    _, bad = check('象上主表达、才艺；于女命古书多言克夫，那是旧说，我只照录，不替它背书。')
+    assert bad == []
+
+
 def test_quoted_mention_is_not_an_assertion():
     # 真模型常把词括起来讨论：「克夫」这个问题本身不成立
     for text in (

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>节气历 · 周天</title>
+<style>
+  :root { --ink:#e7e1d3; --dim:#6f6a60; --zhu:#d9483f; --hair:rgba(242,237,224,.14); }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#050505; color:var(--ink);
+         font:13px/1.9 "PingFang SC","Noto Sans SC",system-ui,sans-serif; }
+  main { max-width:820px; margin:0 auto; padding:56px 24px 96px; }
+  .top { display:flex; align-items:baseline; gap:14px; margin-bottom:6px; }
+  h1 { font:500 20px/1.4 "Songti SC","STSong",serif; letter-spacing:.2em; margin:0; }
+  .top a { margin-left:auto; font-size:11px; color:var(--dim); text-decoration:none;
+           border-bottom:1px solid var(--hair); }
+  .top a:hover { color:var(--ink); }
+  .sub { color:var(--dim); font-size:11.5px; margin-bottom:26px; }
+  .yearbar { display:flex; gap:10px; align-items:center; margin:0 0 18px; font-size:11px; color:var(--dim); }
+  .yearbar button { background:none; border:1px solid var(--hair); color:var(--dim);
+                    font:11px/1 inherit; padding:5px 9px; cursor:pointer; }
+  .yearbar button:hover { color:var(--ink); border-color:rgba(242,237,224,.4); }
+  .row { display:grid; grid-template-columns: 92px 1fr 2fr; gap:10px 16px;
+         padding:10px 0; border-top:1px solid var(--hair); align-items:baseline; }
+  .row.now { background:linear-gradient(to right, rgba(217,72,63,.10), transparent 70%); }
+  .row.now .name { color:#f0d9b5; }
+  .name { font:500 14px/1.6 "Songti SC","STSong",serif; letter-spacing:.12em; }
+  .at { font:11px/1.7 ui-monospace,Consolas,monospace; color:rgba(231,225,211,.62); }
+  .hou { font:10.5px/1.7 ui-monospace,Consolas,monospace; color:rgba(231,225,211,.42); }
+  .hou b { font-weight:400; color:rgba(231,225,211,.72); }
+  .badge { font:9.5px/1 ui-monospace,monospace; color:var(--zhu); border:1px solid rgba(217,72,63,.5);
+           padding:3px 5px; margin-left:8px; vertical-align:1px; }
+  .sec { font:500 15px/1.6 "Songti SC","STSong",serif; letter-spacing:.16em;
+         margin:44px 0 12px; padding-top:20px; border-top:1px solid var(--hair); }
+  .moons { display:flex; flex-wrap:wrap; gap:8px 10px; }
+  .moon { font:10.5px/1.5 ui-monospace,Consolas,monospace; color:rgba(231,225,211,.5);
+          border:1px solid var(--hair); padding:5px 8px; }
+  .moon b { font-weight:400; color:rgba(231,225,211,.8); margin-right:5px; }
+  .moon.next { border-color:rgba(217,72,63,.5); color:#f0d9b5; }
+  .moon.next b { color:var(--zhu); }
+  @media (max-width:560px) {
+    .row { grid-template-columns: 74px 1fr; }
+    .hou { grid-column: 2 / -1; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <h1>节气历</h1>
+    <a href="/">← 回到周天</a>
+  </div>
+  <div class="sub">二十四节气与七十二候，时刻按东八区钟表时间。候按「每候五日」的常例从交节当日推算，不是古历的精确候应。</div>
+
+  <div class="yearbar">
+    <button id="prev">← 上一年</button>
+    <span id="yearLabel">…</span>
+    <button id="next">下一年 →</button>
+    <button id="today">今天</button>
+  </div>
+
+  <div id="list">载入中…</div>
+
+  <h2 class="sec">本年朔望</h2>
+  <div id="moons" class="moons">载入中…</div>
+</main>
+<script type="module" src="./src/calendar.js"></script>
+</body>
+</html>

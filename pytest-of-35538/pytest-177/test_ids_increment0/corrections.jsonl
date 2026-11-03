@@ -1,0 +1,2 @@
+{"id": "c-0001", "at": "2026-11-03", "kind": "calc", "target": "/a", "claim": "x", "evidence": "y", "status": "open", "decision": "", "credit": ""}
+{"id": "c-0002", "at": "2026-11-03", "kind": "cite", "target": "/b", "claim": "x", "evidence": "y", "status": "open", "decision": "", "credit": ""}

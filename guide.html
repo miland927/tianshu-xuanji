@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>怎么用 · 周天</title>
+<style>
+  :root { --ink:#e7e1d3; --dim:#6f6a60; --zhu:#d9483f; --gold:#f0d9b5; --hair:rgba(242,237,224,.14); }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#050505; color:var(--ink);
+         font:13px/1.95 "PingFang SC","Noto Sans SC",system-ui,sans-serif; }
+  .wrap { max-width:860px; margin:0 auto; padding:56px 24px 96px; }
+  header { display:flex; align-items:baseline; gap:14px; margin-bottom:8px; }
+  h1 { font:500 22px/1.4 "Songti SC","STSong",serif; letter-spacing:.24em; margin:0; }
+  header a { margin-left:auto; font-size:11px; color:var(--dim); text-decoration:none;
+             border-bottom:1px solid var(--hair); }
+  header a:hover { color:var(--ink); }
+  .lede { color:rgba(231,225,211,.72); font:15px/2 "Songti SC","STSong",serif; margin:18px 0 10px; }
+  .lede b { color:var(--gold); font-weight:500; }
+  h2 { font:500 13px/1.6 "Songti SC","STSong",serif; letter-spacing:.2em; color:var(--dim);
+       margin:44px 0 14px; padding-bottom:8px; border-bottom:1px solid var(--hair); }
+  .cards { display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--hair);
+           border:1px solid var(--hair); }
+  .card { background:#070707; padding:18px 20px; text-decoration:none; color:inherit; display:block; }
+  .card:hover { background:#0d0d0d; }
+  .card .k { font:9.5px/1.6 ui-monospace,monospace; letter-spacing:.18em; color:var(--dim); }
+  .card .t { font:500 17px/1.5 "Songti SC","STSong",serif; letter-spacing:.12em; margin:6px 0 4px; color:var(--ink); }
+  .card:hover .t { color:var(--gold); }
+  .card .d { font-size:11.5px; color:rgba(231,225,211,.52); line-height:1.8; }
+  ol.steps { margin:0; padding-left:1.2em; }
+  ol.steps li { margin:10px 0; color:rgba(231,225,211,.72); }
+  ol.steps b { color:var(--ink); font-weight:500; }
+  table { width:100%; border-collapse:collapse; font:11.5px/1.8 ui-monospace,Consolas,monospace; }
+  th { font-weight:400; font-size:9.5px; letter-spacing:.18em; color:var(--dim); text-align:left;
+       padding:6px 10px; border-bottom:1px solid var(--hair); }
+  td { padding:8px 10px; border-bottom:1px solid rgba(242,237,224,.07); color:rgba(231,225,211,.7); }
+  td.k { color:var(--gold); width:8em; white-space:nowrap; }
+  .no { border:1px solid rgba(217,72,63,.45); padding:16px 20px; margin-top:10px;
+        background:rgba(217,72,63,.04); }
+  .no div { margin:7px 0; color:rgba(231,225,211,.78); }
+  .no b { color:var(--zhu); font-weight:500; margin-right:8px; }
+  footer { margin-top:56px; padding-top:18px; border-top:1px solid var(--hair);
+           font-size:11px; line-height:2; color:var(--dim); }
+  footer a { color:rgba(231,225,211,.55); text-decoration:none; border-bottom:1px solid var(--hair); }
+  @media (max-width:680px) { .cards { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>怎么用</h1>
+    <a href="/">← 回到周天</a>
+  </header>
+
+  <p class="lede">
+    这是一台<b>读时间的仪器</b>。它把此刻的节气、干支、星宿、月相摆在十二重环上，
+    也能按一个人的生辰排出四柱、六壬课、奇门局、紫微盘。
+    <br />它<b>不预测</b>，也不算命——每一处结论都能点开看依据与原文。
+  </p>
+
+  <h2>四个入口</h2>
+  <div class="cards">
+    <a class="card" href="/">
+      <div class="k">01 · 此刻</div>
+      <div class="t">周天 · 十二重</div>
+      <div class="d">十二只铜环跟着当下转。底部读数条是表盘：节气、候、月建、日柱、真太阳时、宿、月相、日出日落。</div>
+    </a>
+    <a class="card" href="/plate.html">
+      <div class="k">02 · 换盘</div>
+      <div class="t">四副镜头</div>
+      <div class="d">同一台引擎换四块盘：周天、六壬天地盘、紫微十二宫、奇门八宫。右侧按钮就地切换，连切不漏显存。</div>
+    </a>
+    <a class="card" href="/calendar.html">
+      <div class="k">03 · 一年</div>
+      <div class="t">节气历</div>
+      <div class="d">二十四节气交节时刻 + 七十二候 + 当年朔望。可以翻年，可以一键回到今天。</div>
+    </a>
+    <a class="card" href="/year.html">
+      <div class="k">04 · 一张纸</div>
+      <div class="t">年度报告</div>
+      <div class="d">某一年（立春起）的十二个月：月建、流月、十神、交节。带打印样式，「存为 PDF」就能带走。</div>
+    </a>
+  </div>
+
+  <h2>还有这些</h2>
+  <table>
+    <tr><th>页面</th><th>是什么</th></tr>
+    <tr><td class="k">六壬 / 奇门 / 紫微</td>
+        <td><a href="/liuren.html">大六壬</a> · <a href="/qimen.html">奇门九宫</a> · <a href="/ziwei.html">紫微十二宫</a>
+            ——三张盘的正版（二维）；紫微点宫可展开《全书》原文，六壬的毕法可展开原注</td></tr>
+    <tr><td class="k">奇门方阵（3D）</td>
+        <td><a href="/qimen3d.html">立体九宫</a>——斜置的方阵；另有一版
+            <a href="/plate.html?type=qimen">八宫环</a>，那是实验，不是正版</td></tr>
+    <tr><td class="k">它长什么样</td>
+        <td><a href="/samples.html">真实对话摘录</a>——从真模型 50 轮里原样摘的问答，不润色</td></tr>
+    <tr><td class="k">勘误台账</td>
+        <td><a href="/corrections.html">台账</a>——觉得哪里算错了，带证据提；现在是空的</td></tr>
+    <tr><td class="k">接口</td>
+        <td><a href="/api/docs">Swagger</a> · <a href="/api">接口目录</a> ·
+            <a href="/API.md">照着接一遍</a></td></tr>
+  </table>
+
+  <h2>从哪开始</h2>
+  <ol class="steps">
+    <li><b>先看看此刻</b>——不用输入任何东西。环会自己转，读数条自己更新。</li>
+    <li><b>想认真看盘</b>——点右下角「问璇玑」，在「报生辰」里填出生时间与经度（可不填，只聊此刻）。</li>
+    <li><b>想追问</b>——回答下面有「依据 N 条」，点开是这一句的算法与出处；
+        带金色虚线的书名可以点，展开就是古籍原句。</li>
+    <li><b>想看它到底靠不靠得住</b>——<a href="/samples.html">它长什么样</a> 是原话，
+        <a href="/STATUS.md">STATUS.md</a> 逐条列了「验过什么、没验什么」。</li>
+  </ol>
+
+  <h2>表盘怎么读</h2>
+  <table>
+    <tr><th>格子</th><th>意思</th></tr>
+    <tr><td class="k">节气 · 候</td><td>此刻在二十四节气的哪一段、七十二候的哪一候</td></tr>
+    <tr><td class="k">月建</td><td>按「节」定的月支（不是农历初一换月）</td></tr>
+    <tr><td class="k">日柱 / 时柱</td><td>六十甲子的日与时辰</td></tr>
+    <tr><td class="k">真太阳</td><td>按出生地经度校正后的真太阳时，括号里是校正量</td></tr>
+    <tr><td class="k">宿</td><td>子午线当前经过的二十八宿</td></tr>
+    <tr><td class="k">月</td><td>月相与照度（自己算的，与 ephem 对过表）</td></tr>
+    <tr><td class="k">历 / 课 / 门 / 微 / 年 / ?</td><td>六个入口：节气历、六壬、奇门、紫微、年度报告、这一页</td></tr>
+  </table>
+
+  <h2>它不做什么</h2>
+  <div class="no">
+    <div><b>不预测</b>具体事件、不判定吉凶、不给时间表。所有「分数」都是相对用神的顺逆折算，不是概率。</div>
+    <div><b>不替流派选边</b>——同一张盘换个口径会算出不同结果，页面把差异摆出来（「换一派」），不下结论。</div>
+    <div><b>不涉</b>医疗、法律、投资的具体建议。问到这些会停下来。</div>
+    <div><b>不编出处</b>——查不到就说查不到，不补写、不猜。</div>
+  </div>
+
+  <footer>
+    引擎与数据：<a href="https://github.com/zaoxu001/celestial-wheel" target="_blank" rel="noopener">celestial-wheel</a>（MIT）·
+    计算：tianzhi-core · 原文：tianzhi-classics（MIT）·
+    <a href="/api/docs">接口文档</a> ·
+    <a href="/samples.html">它长什么样</a> ·
+    <a href="/corrections.html">勘误台账</a> ·
+    <a href="/legal/disclaimer.html">免责声明</a> ·
+    <a href="/legal/privacy.html">隐私</a> ·
+    <a href="/legal/terms.html">条款</a>
+    <br />AI 生成的内容会标注；算的归算、说的归说。
+  </footer>
+</div>
+</body>
+</html>

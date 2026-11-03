@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>年度报告 · 周天</title>
+<style>
+  :root { --ink:#e7e1d3; --dim:#6f6a60; --zhu:#d9483f; --gold:#f0d9b5; --hair:rgba(242,237,224,.14); }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#050505; color:var(--ink);
+         font:13px/1.9 "PingFang SC","Noto Sans SC",system-ui,sans-serif; }
+  .wrap { max-width:1000px; margin:0 auto; padding:40px 24px 80px; }
+  header { display:flex; align-items:baseline; gap:14px; }
+  h1 { font:500 20px/1.4 "Songti SC","STSong",serif; letter-spacing:.2em; margin:0; }
+  header a { margin-left:auto; font-size:11px; color:var(--dim); text-decoration:none;
+             border-bottom:1px solid var(--hair); }
+  header a:hover { color:var(--ink); }
+  .sub { color:var(--dim); font-size:11.5px; margin:8px 0 18px; }
+  .when { margin-left:14px; }
+  .when input, .when select, .when button { background:rgba(255,255,255,.03); border:1px solid var(--hair);
+    color:var(--ink); font:11px/1.4 ui-monospace,Consolas,monospace; padding:5px 7px; outline:none; }
+  .when input { width:150px; }
+  .when button { cursor:pointer; color:var(--dim); }
+  .when button:hover { color:var(--ink); }
+
+  .head { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--hair);
+          border:1px solid var(--hair); margin:22px 0 24px; }
+  .head div { background:#070707; padding:14px 16px; }
+  .head .k { font:9.5px/1.6 ui-monospace,monospace; letter-spacing:.18em; color:var(--dim); }
+  .head .v { font:500 22px/1.4 "Songti SC","STSong",serif; letter-spacing:.08em; }
+  .head .v small { font-size:12px; color:rgba(231,225,211,.55); margin-left:6px; letter-spacing:0; }
+
+  table { width:100%; border-collapse:collapse; font:12px/1.7 ui-monospace,Consolas,monospace; }
+  th { font-weight:400; font-size:10px; letter-spacing:.2em; color:var(--dim); text-align:left;
+       padding:6px 10px; border-bottom:1px solid var(--hair); }
+  td { padding:9px 10px; border-bottom:1px solid rgba(242,237,224,.07); color:rgba(231,225,211,.75); }
+  td.zhi { font:500 16px/1.4 "Songti SC","STSong",serif; color:var(--ink); letter-spacing:.1em; }
+  td.gz { font:500 15px/1.4 "Songti SC","STSong",serif; color:var(--gold); letter-spacing:.1em; }
+  tr.now td { background:rgba(217,72,63,.07); }
+  tr.now td.zhi { color:var(--zhu); }
+  .note { margin-top:26px; font-size:11px; line-height:1.9; color:var(--dim); }
+  .note b { color:rgba(231,225,211,.6); font-weight:400; }
+  .sec { font:500 13px/1.6 "Songti SC","STSong",serif; letter-spacing:.2em; color:var(--dim);
+         margin:34px 0 10px; padding-bottom:7px; border-bottom:1px solid var(--hair); }
+  .zw { display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--hair);
+        border:1px solid var(--hair); }
+  .zw div { background:#070707; padding:12px 14px; }
+  .zw .k { font:9.5px/1.6 ui-monospace,monospace; letter-spacing:.16em; color:var(--dim); }
+  .zw .v { font:500 18px/1.5 "Songti SC","STSong",serif; letter-spacing:.06em; }
+  .zw .v small { font-size:11px; color:rgba(231,225,211,.55); margin-left:5px; letter-spacing:0; }
+  .hua { margin-top:10px; font:11.5px/1.9 ui-monospace,monospace; color:rgba(231,225,211,.7); }
+  .hua em { font-style:normal; color:var(--gold); }
+  @media (max-width:760px) { .head { grid-template-columns:repeat(2,1fr); } }
+
+  /* 打印 / 存 PDF：换成纸面配色，去掉控件，别拿满屏黑底去浪费墨 */
+  @media print {
+    :root { --ink:#111; --dim:#5a5a5a; --gold:#6d4f12; --zhu:#9b241c; --hair:rgba(0,0,0,.22); }
+    body { background:#fff; color:#111; }
+    .wrap { max-width:none; padding:0; }
+    .when, header a { display:none !important; }
+    .head { background:#ccc; border-color:#ccc; margin:14px 0 18px; }
+    .head div { background:#fff; }
+    .head .v small, .head .k { color:#5a5a5a; }
+    table { font-size:11px; }
+    th { color:#444; border-color:#c8c8c8; }
+    td { border-color:#e2e2e2; color:#222; }
+    tr { break-inside: avoid; }
+    tr.now td { background:#f7efec !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .note { color:#555; }
+    .note b { color:#222; }
+    .sec { color:#5a5a5a; border-color:#c8c8c8; }
+    .zw { background:#ccc; border-color:#ccc; }
+    .zw div { background:#fff; }
+    .zw .k { color:#5a5a5a; }
+    .hua { color:#333; }
+    @page { margin: 16mm; size: A4 portrait; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>年度报告</h1>
+    <a href="/">← 回到周天</a>
+  </header>
+  <div class="sub">立春起算，月建按节气。月干以五虎遁推，可与库里的流月对照。
+    <span class="when">
+      <input id="birth" value="1996-04-18 14:06" spellcheck="false" />
+      <select id="sex"><option value="0">男</option><option value="1">女</option></select>
+      <input id="year" value="2026" style="width:70px" />
+      <button id="go">看这一年</button>
+      <button id="pdf" title="用浏览器的打印对话存成 PDF">存为 PDF</button>
+    </span>
+  </div>
+
+  <div class="head" id="head"></div>
+  <table id="tbl"></table>
+
+  <h2 class="sec">紫微 · 这一年</h2>
+  <div id="zw" class="zw">载入中…</div>
+
+  <div class="note">
+    <b>口径</b>：流年以立春交节为界；月建以十二节为界（不是农历初一）；月干按五虎遁推。
+    分数来自库里的 <code>score_year</code>，是「与用神的顺逆」折算，<b>不是吉凶预言</b>，
+    也不能折算成任何现实事件的概率。
+  </div>
+</div>
+<script type="module" src="./src/year.js"></script>
+</body>
+</html>

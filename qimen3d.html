@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>奇门遁甲 · 九宫方阵 · 周天</title>
+<style>
+  :root { --ink:#e7e1d3; --dim:#6f6a60; --zhu:#d9483f; --gold:#f0d9b5; --hair:rgba(242,237,224,.14); }
+  * { box-sizing:border-box; }
+  html, body { margin:0; min-height:100%; background:#050505; color:var(--ink);
+               font:13px/1.9 "PingFang SC","Noto Sans SC",system-ui,sans-serif; }
+  body { overflow-x:hidden; }
+  #stage { min-height:100vh; display:grid; grid-template-rows:auto 1fr auto; }
+  header { display:flex; align-items:baseline; gap:14px; padding:22px 26px 0; }
+  h1 { font:500 19px/1.4 "Songti SC","STSong",serif; letter-spacing:.22em; margin:0; }
+  header nav { margin-left:auto; display:flex; gap:16px; font-size:11px; }
+  header a { color:var(--dim); text-decoration:none; border-bottom:1px solid var(--hair); }
+  header a:hover { color:var(--ink); }
+  .sub { padding:4px 26px 0; color:var(--dim); font-size:11px; }
+
+  .scene { perspective: 1400px; perspective-origin: 50% 45%; display:grid; place-items:center;
+           padding:26px 0; }
+  #board { display:grid; grid-template-columns:repeat(3, 146px); grid-template-rows:repeat(3, 146px);
+           gap:8px; transform-style:preserve-3d;
+           transform: rotateX(30deg) rotateZ(-9deg) translateY(-140px);
+           transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+  .cell { position:relative; border:1px solid rgba(242,237,224,.2); background:#080808;
+          padding:10px 11px; display:flex; flex-direction:column; justify-content:space-between;
+          transform-style:preserve-3d; cursor:pointer; transition:background .2s, border-color .2s; }
+  .cell:hover { background:#101010; border-color:rgba(242,237,224,.4); }
+  .cell.zhifu { border-color:rgba(240,217,181,.65); }
+  .cell.zhishi { border-color:rgba(217,72,63,.7); }
+  .cell.center { background:#0b0b0b; cursor:default; }
+  .cell .top { display:flex; justify-content:space-between; align-items:baseline;
+               font:9.5px/1.5 ui-monospace,monospace; color:rgba(231,225,211,.42); letter-spacing:.06em; }
+  .cell .shen { color:rgba(231,225,211,.55); }
+  .cell .mid { display:flex; align-items:baseline; gap:6px; }
+  .cell .tian { font:500 26px/1 "Songti SC","STSong",serif; }
+  .cell .star { font-size:11px; color:rgba(231,225,211,.6); }
+  .cell .door { font:500 15px/1.4 "Songti SC","STSong",serif; letter-spacing:.14em;
+                color:rgba(231,225,211,.82); }
+  .cell .di { position:absolute; right:10px; bottom:8px; font:11px/1 ui-monospace,monospace;
+              color:rgba(231,225,211,.35); }
+  .cell .mark { position:absolute; left:10px; top:8px; font:9px/1 ui-monospace,monospace;
+                color:var(--gold); letter-spacing:.08em; }
+
+  footer { padding:0 26px 22px; }
+  .row { display:flex; gap:14px; align-items:center; flex-wrap:wrap;
+         font:11px/1.8 ui-monospace,monospace; color:rgba(231,225,211,.62); }
+  .row b { color:var(--ink); font-weight:400; }
+  .row .when { margin-left:auto; }
+  .row input, .row button { background:rgba(255,255,255,.03); border:1px solid var(--hair);
+         color:var(--ink); font:11px/1.4 ui-monospace,monospace; padding:5px 8px; }
+  .row button { color:var(--dim); cursor:pointer; }
+  .row button:hover { color:var(--ink); }
+  #detail { margin-top:8px; font:11.5px/1.8 "Songti SC","STSong",serif; color:rgba(231,225,211,.72);
+            min-height:1.8em; }
+  #detail em { font-style:normal; color:var(--gold); }
+  @media (max-width:640px) {
+    #board { grid-template-columns:repeat(3, 100px); grid-template-rows:repeat(3, 100px);
+             transform: rotateX(26deg) rotateZ(-6deg); }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <header>
+    <h1>奇门遁甲 · 九宫方阵</h1>
+    <nav>
+      <a href="/qimen.html">方阵（2D）</a>
+      <a href="/plate.html?type=qimen">八宫环（3D）</a>
+      <a href="/">← 回到周天</a>
+    </nav>
+  </header>
+  <div class="sub">同一局，摆成方阵：巽4 离9 坤2 ／ 震3 中5 兑7 ／ 艮8 坎1 乾6。斜着放是为了分层看清神、星门、干。</div>
+
+  <div class="scene">
+    <div id="board"></div>
+  </div>
+
+  <footer>
+    <div class="row">
+      <span>四柱 <b id="sz">…</b></span>
+      <span>局 <b id="ju">…</b></span>
+      <span>直符 <b id="zf">…</b></span>
+      <span>直使 <b id="zs">…</b></span>
+      <span class="when"><input id="at" spellcheck="false" /><button id="go">起局</button></span>
+    </div>
+    <div id="detail">点一个宫，看它这一格的细节。</div>
+  </footer>
+</div>
+<script type="module" src="./src/qimen3d.js"></script>
+</body>
+</html>

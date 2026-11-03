@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>隐私政策 · 周天</title>
+<style>
+  :root { --ink:#e7e1d3; --dim:#6f6a60; --zhu:#d9483f; --hair:rgba(242,237,224,.16); }
+  body { margin:0; background:#050505; color:var(--ink);
+         font:14px/1.95 "PingFang SC","Noto Sans SC",system-ui,sans-serif; }
+  main { max-width:720px; margin:0 auto; padding:64px 24px 96px; }
+  h1 { font:500 22px/1.4 "Songti SC","STSong",serif; letter-spacing:.18em; margin:0 0 8px; }
+  h2 { font:500 15px/1.6 "Songti SC","STSong",serif; letter-spacing:.1em; margin:36px 0 10px;
+       padding-top:18px; border-top:1px solid var(--hair); }
+  p, li { color:rgba(231,225,211,.82); }
+  .draft { border:1px solid rgba(217,72,63,.5); color:var(--zhu); padding:10px 12px;
+           font-size:12px; line-height:1.8; margin:18px 0 28px; }
+  .dim { color:var(--dim); font-size:12px; }
+  a { color:var(--ink); }
+  code { font-family:ui-monospace,Consolas,monospace; font-size:12.5px; color:rgba(231,225,211,.7); }
+  ul { padding-left:20px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>隐私政策</h1>
+  <p class="dim">草案 v0 · 2026-11-03 · 未经法务复核，境内公开服务前必须重写并做备案</p>
+
+  <div class="draft">
+    这是一份工程草案，用来把「哪些数据会被处理、存多久、怎么删」先写清楚，
+    不是为了上线。真对外提供服务前，需要法务按《个人信息保护法》逐条改过。
+  </div>
+
+  <h2>一、会处理哪些信息</h2>
+  <ul>
+    <li><b>你主动填的生辰</b>：出生日期时间、出生地经度与标准经线、性别。用于排盘，这是服务本身。</li>
+    <li><b>你问的话</b>：对话内容。用于生成回答，并进入审计日志。</li>
+    <li><b>运行记录</b>：请求时间、耗时、模型名、算法与数据版本、是否触发越界拦截。</li>
+    <li><b>不采集</b>：不做设备指纹、不埋点追踪、不读通讯录与相册、不要求注册。</li>
+  </ul>
+
+  <h2>二、存在哪里、存多久</h2>
+  <p>
+    默认全部留在本机（部署在哪台机器就存在哪台机器的 <code>audit/</code> 目录），
+    不主动上传到第三方。审计日志默认保留 30 天，可用 <code>tools/audit.py --purge</code> 清理。
+  </p>
+  <p>
+    审计日志<b>默认不存生辰原值</b>：只留「到日」与一个 8 位哈希，真太阳时也只留时刻不留日期。
+    要复现当时的结论，靠日志里的派生量（四柱、旺衰、格局、用神、判据），不靠反推你是哪个人。
+  </p>
+
+  <h2>三、不会做的事</h2>
+  <ul>
+    <li>不把你的生辰或对话卖给、租给、换给任何第三方。</li>
+    <li>不用你的数据训练模型。</li>
+    <li>不做用户画像与精准营销。</li>
+    <li>不向未成年人主动提供服务。</li>
+  </ul>
+
+  <h2>四、你的权利</h2>
+  <p>
+    你可以要求查看、导出、删除与你相关的记录。删除方式：
+    <code>python tools/audit.py --purge --days 0</code>（清空全部审计日志），
+    或直接删除 <code>audit/</code> 目录。删除后不可恢复。
+  </p>
+
+  <h2>五、第三方</h2>
+  <p>
+    若部署方配置了模型服务（如 DeepSeek），对话内容会发送到该服务商的接口用于生成回答。
+    这一步是必要的，且只在生成回答时发生。不配置时，服务退化为「只念读数」，不发送任何内容。
+  </p>
+
+  <h2>六、未成年人</h2>
+  <p>本服务不面向未满十八周岁的使用者。若发现误用，我们会删除相关记录。</p>
+
+  <h2>七、联系与投诉</h2>
+  <p>部署方须在此处填写真实联系方式。原项目：<a href="https://github.com/zaoxu001/celestial-wheel">celestial-wheel</a>。</p>
+</main>
+</body>
+</html>

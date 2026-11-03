@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>免责声明 · 周天</title>
+<style>
+  :root { --ink:#e7e1d3; --dim:#6f6a60; --zhu:#d9483f; --hair:rgba(242,237,224,.16); }
+  body { margin:0; background:#050505; color:var(--ink);
+         font:14px/1.95 "PingFang SC","Noto Sans SC",system-ui,sans-serif; }
+  main { max-width:720px; margin:0 auto; padding:64px 24px 96px; }
+  h1 { font:500 22px/1.4 "Songti SC","STSong",serif; letter-spacing:.18em; margin:0 0 8px; }
+  h2 { font:500 15px/1.6 "Songti SC","STSong",serif; letter-spacing:.1em; margin:36px 0 10px;
+       padding-top:18px; border-top:1px solid var(--hair); }
+  p, li { color:rgba(231,225,211,.82); }
+  .draft { border:1px solid rgba(217,72,63,.5); color:var(--zhu); padding:10px 12px;
+           font-size:12px; line-height:1.8; margin:18px 0 28px; }
+  .dim { color:var(--dim); font-size:12px; }
+  a { color:var(--ink); }
+  ul { padding-left:20px; }
+  blockquote { margin:18px 0; padding:2px 0 2px 14px; border-left:1px solid rgba(217,72,63,.5);
+               color:rgba(231,225,211,.7); font-size:13.5px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>免责声明</h1>
+  <p class="dim">草案 v0 · 2026-11-03</p>
+
+  <div class="draft">
+    这一页把「哪些能验、哪些不能验」讲清楚。它是这个项目最该被看见的一段话。
+  </div>
+
+  <h2>一、它是术数体系内部的自洽推演</h2>
+  <blockquote>
+    干支、五行、旺衰、格局，是一套以干支为坐标的推演体系。它可以被精确计算、
+    可以复现、可以逐条指回典籍，但它<b>没有可重复的实证效力</b>。
+    算得准的是这套体系内部的一致性，不是外部世界会发生什么。
+  </blockquote>
+
+  <h2>二、哪些部分可验</h2>
+  <ul>
+    <li><b>历法</b>：节气时刻、真太阳时、干支纪日。这些是天文，错了就是错。本项目用独立实现对过表。</li>
+    <li><b>排盘</b>：四柱、藏干、十神、起运。这些是查表与推导，同样只有对错。</li>
+    <li><b>判断</b>：旺衰分档、用神取法、格局认定。<b>这里有流派</b>，同一个盘换一组参数结论就变。
+      本项目把参数摆出来（「换一派」），不替你选。</li>
+  </ul>
+
+  <h2>三、不是什么</h2>
+  <ul>
+    <li>不是医学、法律、金融、心理方面的任何建议。</li>
+    <li>不是对未来的预测，不构成任何决策依据。</li>
+    <li>不是对你个人命运的断言。任何把这套输出当成判决的用法，都超出了它的能力。</li>
+  </ul>
+
+  <h2>四、关于 AI 生成的部分</h2>
+  <p>
+    读数与判据由确定性算法算出，可核对；措辞由语言模型生成，可能不准。
+    若两者冲突，<b>以「依据」里的字段为准</b>，不以话说得漂不漂亮为准。
+  </p>
+
+  <h2>五、典籍引用</h2>
+  <p>
+    所引典籍均为公有领域古籍，出处逐条可追。若发现引用与原文不符，那是缺陷，请指出。
+  </p>
+</main>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>换镜头 · 周天</title>
+<style>
+  html, body { margin:0; height:100%; overflow:hidden; background:#050505; color:#e7e1d3;
+               font-family:"PingFang SC","Noto Sans SC",system-ui,sans-serif; }
+  #wheel { position:fixed; inset:0; }
+  #wheel canvas { display:block; width:100%; height:100%; }
+  header { position:fixed; left:24px; top:20px; z-index:2; font-size:11px; letter-spacing:.32em; color:#6f6a60; }
+  header b { display:block; margin-bottom:4px; font-size:17px; letter-spacing:.3em; color:#e7e1d3; font-weight:500; }
+  #side { position:fixed; right:24px; top:64px; z-index:2; width:300px;
+          font:11px/1.9 ui-monospace,Consolas,monospace; color:rgba(231,225,211,.62); }
+  #side h2 { font:500 13px/1.6 "Songti SC","STSong",serif; letter-spacing:.16em; color:#6f6a60;
+             margin:0 0 8px; padding-bottom:6px; border-bottom:1px solid rgba(242,237,224,.14); }
+  #side .row { display:flex; justify-content:space-between; gap:10px; }
+  #side b { font-weight:400; color:#e7e1d3; text-align:right; }
+  #lenses { display:flex; flex-direction:column; gap:6px; align-items:flex-start; }
+  #lenses button { background:none; border:1px solid rgba(242,237,224,.16); color:#6f6a60;
+                   font:11px/1 inherit; padding:7px 11px; cursor:pointer; letter-spacing:.08em; }
+  #lenses button:hover { color:#e7e1d3; border-color:rgba(242,237,224,.4); }
+  #lenses button.here { color:#f0d9b5; border-color:rgba(217,72,63,.55); }
+  #tip { position:fixed; right:24px; bottom:24px; max-width:40vw; text-align:right;
+         font-size:12px; line-height:1.8; color:#6f6a60; opacity:0; transition:opacity .25s; }
+  #tip.on { opacity:1; }
+  #tip b { color:#e7e1d3; font-size:14px; }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/build/three.module.js",
+    "three/addons/": "./vendor/three/examples/jsm/",
+    "three/examples/jsm/": "./vendor/three/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="wheel"></div>
+<header><b id="title">…</b><span id="sub"></span></header>
+<div id="side">
+  <h2>这一盘</h2>
+  <div id="rows"></div>
+  <h2 style="margin-top:20px">换镜头</h2>
+  <div id="lenses">
+    <button data-type="zhoutian">周天 · 十二重</button>
+    <button data-type="liuren">六壬 · 天地盘</button>
+    <button data-type="ziwei">紫微 · 十二宫</button>
+    <button data-type="qimen">奇门 · 八宫环</button>
+  </div>
+  <h2 style="margin-top:20px">别的入口</h2>
+  <div class="row"><a href="/calendar.html" style="color:#6f6a60;text-decoration:none;border-bottom:1px solid rgba(242,237,224,.16)">节气历</a></div>
+  <div class="row"><a href="/" style="color:#6f6a60;text-decoration:none;border-bottom:1px solid rgba(242,237,224,.16)">首页（含璇玑面板）</a></div>
+</div>
+<div id="tip"></div>
+<script type="module" src="./src/plate.js"></script>
+</body>
+</html>

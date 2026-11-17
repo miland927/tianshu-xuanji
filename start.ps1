@@ -1,4 +1,4 @@
-﻿# 周天 / Celestial Wheel —— 本机启动脚本
+# 周天 / Celestial Wheel —— 本机启动脚本
 # 用法：双击 start.cmd，或在本目录执行  powershell -ExecutionPolicy Bypass -File .\start.ps1
 # 参数：-Port 8788（端口被占用会自动往后找）  -NoBrowser（不自动开浏览器）
 [CmdletBinding()]
@@ -25,9 +25,13 @@ $url = "http://127.0.0.1:$Port/"
 $python = Get-Command python, python3 -ErrorAction SilentlyContinue | Select-Object -First 1
 $node = Get-Command node -ErrorAction SilentlyContinue | Select-Object -First 1
 # 带 /api 的那套要 tianzhi-core 的 venv；有它就用 uvicorn，没有就退成纯静态站。
-$venv = 'D:\Dev\tianzhi\.venv\Scripts\python.exe'
+# 先找仓库自带的 .venv，再找老的固定路径。
+$venv = @(
+  (Join-Path $PSScriptRoot '.venv\Scripts\python.exe'),
+  'D:\Dev\tianzhi\.venv\Scripts\python.exe'
+) | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
 
-if (Test-Path $venv) {
+if ($venv) {
   $exe = $venv
   $serverArgs = @('-m', 'uvicorn', 'server.app:app', '--host', '127.0.0.1', '--port', "$Port")
   $mode = 'full'
@@ -52,7 +56,7 @@ Write-Host "  $url" -ForegroundColor Cyan
 if ($mode -eq 'full') {
   Write-Host '  含 /api：屏幕右下角的「问璇玑」可用。' -ForegroundColor DarkGray
 } else {
-  Write-Host '  纯静态：右下角的璇玑面板取不到读数（要 D:\Dev\tianzhi\.venv 才有 /api）。' -ForegroundColor DarkGray
+  Write-Host '  纯静态：右下角的璇玑面板取不到读数（要仓库里的 .venv 才有 /api）。' -ForegroundColor DarkGray
 }
 Write-Host '  必须走 http，双击 index.html（file://）会被浏览器的模块与 fetch 拦住。' -ForegroundColor DarkGray
 Write-Host '  Ctrl+C 或关掉这个窗口即可停止。' -ForegroundColor DarkGray

@@ -19,7 +19,10 @@ from pathlib import Path
 from tempfile import mkdtemp
 
 ROOT = Path(__file__).resolve().parent.parent
-VENV = Path(r'D:\Dev\tianzhi\.venv\Scripts\python.exe')
+VENV = next(
+    (p for p in (ROOT / '.venv' / 'Scripts' / 'python.exe',
+                 Path(r'D:\Dev\tianzhi\.venv\Scripts\python.exe')) if p.exists()),
+    Path(sys.executable))
 BIRTH = '1996-04-18 14:06'
 QUESTION = '我 1996-04-18 14:06 出生，帮我看看这个盘'
 

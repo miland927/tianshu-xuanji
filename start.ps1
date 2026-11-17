@@ -1,4 +1,4 @@
-﻿# 周天 / Celestial Wheel —— 本机启动脚本
+# 周天 / Celestial Wheel —— 本机启动脚本
 # 用法：双击 start.cmd，或在本目录执行  powershell -ExecutionPolicy Bypass -File .\start.ps1
 # 参数：-Port 8788（端口被占用会自动往后找）  -NoBrowser（不自动开浏览器）
 [CmdletBinding()]

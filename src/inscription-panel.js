@@ -518,7 +518,8 @@ async function qi() {
     }
     setLayer('ding')
     dingKey = key
-    asker?.('读这张盘。')
+    // 带上四柱：每张盘的开场白都不一样，模型不会把新盘当成重复提问
+    asker?.(`读这张盘：${c.bazi}`)
   } catch (e) {
     if (ticket === qiSeq) pre.innerHTML = `<span class="warn">${escape(e.message === 'Failed to fetch' ? '排不了：本地接口没起（server/app.py）' : e.message)}</span>`
   } finally {

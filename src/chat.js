@@ -244,16 +244,18 @@ async function ask(text) {
   if (busy) return
   busy = true
   sendBtn.disabled = true
+  const { birth, longitude, gender, standard_longitude } = readParams()
+  // 复述确认：先说清这次用的是哪份输入，免得答的是别人
+  // 同一份生辰只复述一次；换了生辰才再说
+  const echo = birth ? `${birth} · 东经 ${longitude}（时区经线 ${standard_longitude}）· ${gender ? '坤造' : '乾造'}` : ''
+  // 换了一张盘：旧盘的问答不再带给模型，否则它会拿上一张盘的结论读这张（走查 P0-1）
+  if (lastEcho && echo !== lastEcho) history.length = 0
   addMsg('user', text)
   history.push({ role: 'user', content: text })
-  const { birth, longitude, gender, standard_longitude } = readParams()
   const bubble = addMsg('assistant', '')
   let acc = ''
   let metaState = {}
   let blocked = 0
-  // 复述确认：先说清这次用的是哪份输入，免得答的是别人
-  // 同一份生辰只复述一次；换了生辰才再说
-  const echo = birth ? `${birth} · 东经 ${longitude}（时区经线 ${standard_longitude}）· ${gender ? '坤造' : '乾造'}` : ''
   if (echo && echo !== lastEcho) {
     const line = document.createElement('div')
     line.className = 'm sys'

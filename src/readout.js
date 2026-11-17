@@ -41,7 +41,8 @@ body.xji-open #ro { opacity: 0; pointer-events: none; transition: opacity .2s; }
   #ro { left: 0; right: 0; bottom: 0; max-width: none; font-size: 9.5px;
         padding: 9px 16px 10px; gap: 0 10px; flex-wrap: wrap;
         background: rgba(5,5,5,.92); }
-  #ro .seg:nth-child(n+6) { display: none; }
+  /* 只留前两段（节气、候/月建）。连分隔符一起藏，否则后面会剩一串空的「/」 */
+  #ro > :nth-child(n+5) { display: none; }
 }
 `
 

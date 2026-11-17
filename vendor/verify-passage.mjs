@@ -40,8 +40,12 @@ try {
   await send(ws, ++id, 'Page.enable')
   await send(ws, ++id, 'Runtime.enable')
   await send(ws, ++id, 'Emulation.setDeviceMetricsOverride', { width: 1400, height: 1000, deviceScaleFactor: 1, mobile: false })
-  await send(ws, ++id, 'Page.navigate', { url: 'http://127.0.0.1:8788/' })
-  await sleep(2600)
+  await send(ws, ++id, 'Page.navigate', { url: process.argv[2] ?? 'http://127.0.0.1:8788/' })
+  // 等铭文栏和周天都挂上再动手；固定 2.6 秒在软件渲染下不够
+  for (let i = 0; i < 80; i++) {
+    await sleep(250)
+    try { if (await evalJs(`!!(window.__wheel && window.__xji && document.querySelector('#xji-trigger'))`)) break } catch { }
+  }
 
   // 填生日（不然只有历法依据，没有用神，也就没有典籍引用），再问一句
   await evalJs(`(() => {

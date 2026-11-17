@@ -1,208 +1,6 @@
-﻿/* 璇玑：接在周天右下角的一个小端口。读数由本地 /api 给，话由模型说。 */
-const CSS = `
-#xji-trigger {
-  position: fixed; right: 24px; bottom: 24px; z-index: 30;
-  display: flex; align-items: center; gap: 9px;
-  padding: 9px 15px 9px 12px;
-  background: rgba(8,8,8,.72); color: var(--ink);
-  border: 1px solid rgba(242,237,224,.22); border-radius: 999px;
-  font: 12px/1 "PingFang SC","Noto Sans SC",system-ui,sans-serif; letter-spacing: .12em;
-  cursor: pointer; backdrop-filter: blur(6px);
-  transition: border-color .2s, background .2s, opacity .2s;
-}
-#xji-trigger:hover { border-color: rgba(242,237,224,.45); background: rgba(14,14,14,.85); }
-#xji-trigger .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--zhu); box-shadow: 0 0 8px var(--zhu); }
-body.xji-open #xji-trigger { opacity: 0; pointer-events: none; }
-body.xji-open #tip { display: none; }
-
-#xji {
-  position: fixed; right: 24px; bottom: 24px; z-index: 31;
-  width: min(380px, calc(100vw - 48px)); height: min(640px, calc(100vh - 48px));
-  display: none; flex-direction: column;
-  background: rgba(6,6,6,.94); border: 1px solid rgba(242,237,224,.26);
-  box-shadow: 0 18px 60px rgba(0,0,0,.55);
-  backdrop-filter: blur(10px);
-  font-family: "PingFang SC","Noto Sans SC",system-ui,sans-serif;
-}
-body.xji-open #xji { display: flex; }
-
-.xji-head {
-  display: flex; align-items: baseline; gap: 10px; padding: 14px 16px 10px;
-  border-bottom: 1px solid rgba(242,237,224,.12);
-}
-.xji-head b { font: 500 15px/1 "Songti SC","STSong",serif; letter-spacing: .28em; color: var(--ink); }
-.xji-head span { font-size: 10px; letter-spacing: .16em; color: var(--ink-dim); }
-.xji-head button {
-  margin-left: auto; background: none; border: 0; color: var(--ink-dim);
-  font-size: 16px; line-height: 1; cursor: pointer; padding: 2px 4px;
-}
-.xji-head button + button { margin-left: 2px; }
-.xji-head button:hover { color: var(--ink); }
-
-/* key 配置：只在点开时出现，保存后只显示掩码 */
-#xji-keybox { padding: 10px 16px 12px; border-bottom: 1px solid rgba(242,237,224,.08);
-  font: 10.5px/1.8 ui-monospace,Consolas,monospace; color: var(--ink-dim); }
-.kb-status { color: rgba(231,225,211,.6); margin-bottom: 6px; }
-.kb-status b { color: var(--gold); font-weight: 400; }
-.kb-row { display: flex; gap: 6px; align-items: center; margin-top: 6px; }
-#xji-key { flex: 1; background: rgba(255,255,255,.03); border: 1px solid rgba(242,237,224,.14);
-  color: var(--ink); font: 11px/1.4 ui-monospace,monospace; padding: 6px 8px; }
-#xji-key:focus { border-color: rgba(242,237,224,.34); outline: none; }
-#xji-keybox button { background: none; border: 1px solid rgba(242,237,224,.16);
-  color: var(--ink-dim); font: 10.5px/1 inherit; padding: 6px 9px; cursor: pointer; }
-#xji-keybox button:hover { color: var(--ink); border-color: rgba(242,237,224,.4); }
-#xji-kmsg { color: var(--ink-dim); }
-
-#xji-read { padding: 9px 16px; font: 10px/1.7 ui-monospace,Consolas,monospace; color: var(--ink-dim);
-  border-bottom: 1px solid rgba(242,237,224,.08); }
-#xji-read em { color: var(--ink); font-style: normal; }
-
-#xji-log { flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
-#xji-log .m { font-size: 12.5px; line-height: 1.85; color: rgba(231,225,211,.86); white-space: pre-wrap; }
-#xji-log .m.me { color: var(--ink-dim); }
-#xji-log .m.me::before { content: "问　"; color: rgba(242,237,224,.3); }
-#xji-log .m.sys { font: 9.5px/1.6 ui-monospace,Consolas,monospace; color: rgba(231,225,211,.4);
-  letter-spacing: .04em; }
-#xji-log .m.sys::before { content: "以　"; color: rgba(231,225,211,.28); }
-#xji-log .m.ai::before { content: "璇玑　"; color: var(--zhu); font-size: 10px; letter-spacing: .1em; }
-#xji-log .err { color: var(--zhu); font-size: 11px; line-height: 1.7; }
-
-#xji-log .ev { margin-top: -2px; }
-#xji-log .ev-btn {
-  background: none; border: 1px solid rgba(242,237,224,.18); color: rgba(231,225,211,.55);
-  font: 10px/1 inherit; letter-spacing: .1em; padding: 4px 8px; cursor: pointer;
-}
-#xji-log .ev-btn:hover { color: var(--ink); border-color: rgba(242,237,224,.4); }
-#xji-log .ev-btn.on { color: #f0d9b5; border-color: rgba(217,72,63,.5); }
-#xji-log .ev-list { display: none; margin-top: 9px; padding-left: 10px;
-  border-left: 1px solid rgba(217,72,63,.3); }
-#xji-log .ev-list.on { display: block; }
-#xji-log .ev-layer { font: 9.5px/1.6 ui-monospace,Consolas,monospace; color: var(--zhu);
-  letter-spacing: .2em; margin: 9px 0 2px; }
-#xji-log .ev-item { font: 10.5px/1.75 ui-monospace,Consolas,monospace; color: rgba(231,225,211,.62);  word-break: break-word; }
-#xji-log .ev-cite { background: none; border: 0; border-bottom: 1px dotted rgba(240,217,181,.7);
-  color: #f0d9b5; font: inherit; padding: 0; cursor: pointer; }
-#xji-log .ev-cite:hover { border-bottom-style: solid; }
-#xji-log .ev-passage { margin: 7px 0 4px; padding: 9px 11px; border-left: 2px solid rgba(240,217,181,.45);
-  background: rgba(240,217,181,.035); font: 10.5px/1.85 ui-monospace,Consolas,monospace;
-  color: rgba(231,225,211,.78); }
-#xji-log .ev-passage b { display: block; color: #f0d9b5; font-weight: 400; font-size: 9.5px;
-  letter-spacing: .1em; margin-bottom: 4px; }
-#xji-log .ev-passage em { font-style: normal; color: rgba(231,225,211,.45); }
-#xji-log .alt { margin-top: 8px; }
-#xji-log .alt-body { display: none; margin-top: 9px; padding-left: 10px;
-  border-left: 1px solid rgba(242,237,224,.18); }
-#xji-log .alt-body.on { display: block; }
-#xji-log .alt-field { font: 10.5px/1.8 ui-monospace,Consolas,monospace; color: var(--ink); margin-top: 7px; }
-#xji-log .alt-row { font: 10px/1.75 ui-monospace,Consolas,monospace; color: rgba(231,225,211,.55);
-  padding-left: 12px; }
-#xji-log .alt-note { font: 10px/1.7 ui-monospace,Consolas,monospace; color: rgba(231,225,211,.4);
-  margin-top: 8px; }
-
-#xji-meta { padding: 0 16px 10px; display: flex; flex-wrap: wrap; gap: 6px; }
-#xji-meta i { font: 10px/1 ui-monospace,Consolas,monospace; font-style: normal; color: rgba(231,225,211,.5);
-  border: 1px solid rgba(242,237,224,.14); padding: 4px 6px; }
-#xji-meta i.warn { color: var(--zhu); border-color: rgba(217,72,63,.4); }
-
-#xji-form { border-top: 1px solid rgba(242,237,224,.12); padding: 10px 12px 8px; }
-#xji-form textarea {
-  width: 100%; height: 52px; resize: none; background: rgba(255,255,255,.03); color: var(--ink);
-  border: 1px solid rgba(242,237,224,.16); padding: 8px 9px; font: 12px/1.7 inherit;
-  outline: none;
-}
-#xji-form textarea:focus { border-color: rgba(242,237,224,.38); }
-#xji-form .row { display: flex; align-items: center; gap: 8px; margin-top: 7px; }
-#xji-form .row small { font-size: 9.5px; color: rgba(231,225,211,.36); letter-spacing: .04em; }
-#xji-form .row small a { color: rgba(231,225,211,.5); text-decoration: none;
-  border-bottom: 1px dotted rgba(242,237,224,.3); margin-left: 2px; }
-#xji-form .row small a:hover { color: var(--ink); border-bottom-color: rgba(242,237,224,.6); }
-#xji-form button {
-  margin-left: auto; padding: 6px 14px; cursor: pointer;
-  background: rgba(217,72,63,.14); color: #f0d9b5; border: 1px solid rgba(217,72,63,.45);
-  font: 11px/1 inherit; letter-spacing: .14em;
-}
-#xji-form button:disabled { opacity: .4; cursor: default; }
-
-#xji-birth { border-bottom: 1px solid rgba(242,237,224,.08); }
-#xji-birth summary {
-  padding: 8px 16px; font-size: 10.5px; color: var(--ink-dim); letter-spacing: .1em; cursor: pointer;
-  list-style: none;
-}
-#xji-birth summary::-webkit-details-marker { display: none; }
-#xji-birth summary::before { content: "＋ "; color: rgba(242,237,224,.35); }
-#xji-birth[open] summary::before { content: "－ "; }
-#xji-birth .fields { display: grid; grid-template-columns: .9fr .9fr .6fr; gap: 6px; padding: 0 16px 10px; }
-#xji-birth .fields input#xji-b-date { grid-column: 1 / -1; }
-#xji-birth input {
-  background: rgba(255,255,255,.03); border: 1px solid rgba(242,237,224,.14);
-  color: var(--ink); font: 11px/1.4 ui-monospace,Consolas,monospace; padding: 6px 7px; outline: none; width: 100%;
-}
-#xji-birth input:focus { border-color: rgba(242,237,224,.34); }
-
-/* 竖屏：整块贴底，别把铜环全遮住 */
-@media (max-width: 640px) {
-  #xji { right: 0; bottom: 0; width: 100vw; height: 76vh;
-         border-left: 0; border-right: 0; border-bottom: 0; }
-  #xji-trigger { right: 16px; bottom: 16px; }
-  #xji-log .m { font-size: 13px; line-height: 1.9; }
-  #xji-read { font-size: 9.5px; }
-}
-`
-
-const HTML = `
-<button id="xji-trigger" type="button"><span class="dot"></span>问 璇 玑</button>
-<section id="xji" aria-label="璇玑">
-  <div class="xji-head">
-    <b>璇玑</b><span>器灵 · 只读不算</span>
-    <button id="xji-keybtn" type="button" title="配置 API key" aria-label="配置 key">⚙</button>
-    <button id="xji-close" type="button" aria-label="关闭">×</button>
-  </div>
-  <div id="xji-keybox" hidden>
-    <div class="kb-status" id="xji-kstatus">检查中…</div>
-    <div class="kb-row">
-      <input id="xji-key" type="password" placeholder="sk-…（只存在这台机器的内存里）" spellcheck="false" autocomplete="off" />
-    </div>
-    <div class="kb-row">
-      <button id="xji-ksave" type="button">保存并测试</button>
-      <button id="xji-kclear" type="button">清除</button>
-      <small id="xji-kmsg"></small>
-    </div>
-  </div>
-  <div id="xji-read">读数载入中…</div>
-  <details id="xji-birth">
-    <summary>报生辰（可选，报了才排盘）</summary>
-    <div class="fields">
-      <input id="xji-b-date" placeholder="1996-04-18 14:06" />
-      <input id="xji-b-lon" placeholder="经度 114.93" />
-      <input id="xji-b-std" placeholder="时区经线 120" value="120" />
-      <select id="xji-b-sex" style="background:rgba(255,255,255,.03);border:1px solid rgba(242,237,224,.14);color:var(--ink);font:11px ui-monospace,monospace;padding:6px">
-        <option value="0">男</option><option value="1">女</option>
-      </select>
-    </div>
-  </details>
-  <div id="xji-log">
-    <div class="m ai">铜环转着，字是死的。你要问什么，得先说完。</div>
-  </div>
-  <div id="xji-meta"></div>
-  <form id="xji-form" autocomplete="off">
-    <textarea id="xji-input" placeholder="问什么？也可以只让我念此刻的读数。" maxlength="500"></textarea>
-    <div class="row">
-      <small>AI 生成 · 不是预测 · <a href="/legal/disclaimer.html" target="_blank" rel="noopener">免责</a>
-        <a href="/legal/privacy.html" target="_blank" rel="noopener">隐私</a>
-        <a href="/legal/terms.html" target="_blank" rel="noopener">条款</a></small>
-      <button id="xji-send" type="submit">问</button>
-    </div>
-  </form>
-</section>
-`
-
-const style = document.createElement('style')
-style.textContent = CSS
-document.head.appendChild(style)
-
-const holder = document.createElement('div')
-holder.innerHTML = HTML
-document.body.append(holder.firstElementChild, holder.lastElementChild)
+/* 璇玑的对话逻辑：流式回答、依据、换一派、key。
+ * 版面与层级（观 → 问 → 定）在 inscription-panel.js；这里只用它建好的 #xji-* 节点。 */
+import { panel } from './inscription-panel.js'
 
 const $ = (s) => document.querySelector(s)
 const log = $('#xji-log')
@@ -215,6 +13,14 @@ const readLine = $('#xji-read')
 
 const history = []
 let busy = false
+let lastEcho = ''
+
+// 桌面上滚的是对话区；竖屏/矮屏上整条铭文栏一起滚（见 inscription-panel 的 CSS），两边都推到底
+const panelEl = $('#xji')
+function scrollEnd() {
+  log.scrollTop = log.scrollHeight
+  if (panelEl.scrollHeight > panelEl.clientHeight + 1) panelEl.scrollTop = panelEl.scrollHeight
+}
 
 const escape = (s) => s.replace(/[<>&]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]))
 
@@ -223,7 +29,7 @@ function addMsg(role, text) {
   div.className = 'm ' + (role === 'user' ? 'me' : 'ai')
   div.textContent = text
   log.appendChild(div)
-  log.scrollTop = log.scrollHeight
+  scrollEnd()
   return div
 }
 
@@ -343,7 +149,7 @@ function renderEvidence(afterEl, groups) {
         } catch (e) {
           box.textContent = '取原文失败'
         }
-        log.scrollTop = log.scrollHeight
+        scrollEnd()
       })
       list.appendChild(row)
     }
@@ -351,7 +157,7 @@ function renderEvidence(afterEl, groups) {
   btn.addEventListener('click', () => {
     const on = list.classList.toggle('on')
     btn.classList.toggle('on', on)
-    log.scrollTop = log.scrollHeight
+    scrollEnd()
   })
 
   // 换一派：同一张盘，另一组口径重算，差异逐条摆出来
@@ -366,7 +172,7 @@ function renderEvidence(afterEl, groups) {
   altBtn.addEventListener('click', () => {
     const on = altBody.classList.toggle('on')
     altBtn.classList.toggle('on', on)
-    if (!on) { log.scrollTop = log.scrollHeight; return }
+    if (!on) { scrollEnd(); return }
     const go = () => alt.scrollIntoView({ block: 'start' })
     if (!altBody.dataset.loaded) loadCompare(altBody).then(go)
     else go()
@@ -423,6 +229,8 @@ async function loadCompare(host) {
 
 function applyFocus(f) {
   if (!f || !f.ring || !f.label) return
+  // 只在「问」里转环：定 时四柱已经点亮，别换成单格；观 时栏已收起，回答迟到也不该把镜头拽走
+  if (panel.layer !== 'wen') return
   const w = window.__wheel
   if (!w || typeof w.indexOf !== 'function') return
   const idx = w.indexOf(f.ring, f.label)
@@ -444,12 +252,15 @@ async function ask(text) {
   let metaState = {}
   let blocked = 0
   // 复述确认：先说清这次用的是哪份输入，免得答的是别人
-  if (birth) {
+  // 同一份生辰只复述一次；换了生辰才再说
+  const echo = birth ? `${birth} · 东经 ${longitude}（时区经线 ${standard_longitude}）· ${gender ? '坤造' : '乾造'}` : ''
+  if (echo && echo !== lastEcho) {
     const line = document.createElement('div')
     line.className = 'm sys'
-    line.textContent = `${birth} · 东经 ${longitude}（时区经线 ${standard_longitude}）· ${gender ? '女' : '男'}`
+    line.textContent = echo
     log.insertBefore(line, bubble)
   }
+  lastEcho = echo
 
   try {
     const res = await fetch('/api/chat', {
@@ -487,7 +298,7 @@ async function ask(text) {
         if (!ev || !dataLine) continue
         const data = JSON.parse(dataLine)
         if (ev === 'meta') { metaState = data; paintMeta(metaState); applyFocus(data.focus) }
-        else if (ev === 'delta') { acc += data.text; bubble.textContent = acc; log.scrollTop = log.scrollHeight }
+        else if (ev === 'delta') { acc += data.text; bubble.textContent = acc; scrollEnd() }
         else if (ev === 'degraded') {
           metaState = { ...metaState, degraded: data.reason }
           paintMeta(metaState)
@@ -514,16 +325,16 @@ async function ask(text) {
   } finally {
     busy = false
     sendBtn.disabled = false
-    log.scrollTop = log.scrollHeight
+    scrollEnd()
+    // 「起」的时候璇玑正忙：那一问排在这里，说完接着问
+    if (queued) { const t = queued; queued = null; setTimeout(() => ask(t), 0) }
   }
 }
 
-$('#xji-trigger').addEventListener('click', () => {
-  document.body.classList.add('xji-open')
-  loadNow()
-  input.focus()
-})
-$('#xji-close').addEventListener('click', () => document.body.classList.remove('xji-open'))
+// 打开、收起、Esc 逐层回退都归铭文栏管；这里只在打开时刷新读数，并接住「起」之后的那一问
+let queued = null
+panel.onOpen(loadNow)
+panel.setAsker((text) => { if (busy) queued = text; else ask(text) })
 
 // ---- API key：网页上填，只存服务端内存 ----
 const keyBox = $('#xji-keybox')
@@ -543,8 +354,9 @@ async function refreshKey() {
   }
 }
 
-$('#xji-keybtn').addEventListener('click', () => {
+$('#xji-keybtn').addEventListener('click', (e) => {
   keyBox.hidden = !keyBox.hidden
+  e.currentTarget.setAttribute('aria-expanded', String(!keyBox.hidden))
   if (!keyBox.hidden) { refreshKey(); keyInput.focus() }
 })
 
@@ -577,25 +389,17 @@ $('#xji-kclear').addEventListener('click', async () => {
   refreshKey()
   loadNow()
 })
-addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && document.body.classList.contains('xji-open')) {
-    document.body.classList.remove('xji-open')
-  }
-})
-input.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault()
-    const text = input.value.trim()
-    if (!text) return
-    input.value = ''
-    ask(text)
-  }
-})
-$('#xji-form').addEventListener('submit', (e) => {
-  e.preventDefault()
+// 璇玑还在说的时候不收新问题：字留在输入框里，不清空、不吞掉，说完再发
+function send() {
   const text = input.value.trim()
   if (!text) return
+  if (busy) { input.classList.add('wait'); setTimeout(() => input.classList.remove('wait'), 900); return }
   input.value = ''
   ask(text)
+}
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send() }
 })
-$('#xji-birth').addEventListener('toggle', loadNow)
+$('#xji-form').addEventListener('submit', (e) => { e.preventDefault(); send() })
+// 经度、时区经线一改，顶上的读数（钟表、真太阳时）跟着改
+for (const id of ['#xji-b-lon', '#xji-b-std']) $(id).addEventListener('change', loadNow)

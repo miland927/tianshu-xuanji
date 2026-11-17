@@ -5,17 +5,31 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Celestial Wheel</title>
 <style>
+  /* 设计约束清单 v1：色值、字体、发丝线、缓动。新增界面只从这里取，不另起颜色。 */
   :root {
-    --ink: #e7e1d3;
-    --ink-dim: #6f6a60;
-    --zhu: #d9483f;
+    --bg: #050505;                     /* 场景底色，与 scene.background 同值 */
+    --paper: #f2ede0;                  /* 器上字、太极、发丝线的基色 */
+    --ink: #e7e1d3;                    /* 正文 */
+    --ink-dim: #6f6a60;                /* 次要文字 */
+    --dim: var(--ink-dim);             /* 子页面用的别名 */
+    --zhu: #d9483f;                    /* 朱：唯一强调色 */
+    --gold: #f0d9b5;                   /* DOM 金：引文、激活态 */
+    --gold-gl: #ffd9a0;                /* 3D 金：悬停/聚焦字格（celestial-wheel 的 GOLD） */
     --hair: rgba(242, 237, 224, .16);
+    --hair-1: rgba(242, 237, 224, .08);  /* 分区线 */
+    --hair-2: rgba(242, 237, 224, .12);  /* 头尾线 */
+    --hair-3: rgba(242, 237, 224, .22);  /* 下划线输入 / 触发器 */
+    --hair-hi: rgba(242, 237, 224, .45); /* 悬停 / 聚焦 */
+    --f-glyph: "Zhuque Fangsong", "Songti SC", "STSong", "Noto Serif SC", serif;
+    --f-ui: "PingFang SC", "Noto Sans SC", system-ui, sans-serif;
+    --f-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --ease: cubic-bezier(.2, .7, .2, 1);
   }
   * { box-sizing: border-box; }
   html, body {
     margin: 0; height: 100%; overflow: hidden;
-    background: #050505; color: var(--ink);
-    font-family: "PingFang SC", "Noto Sans SC", system-ui, sans-serif;
+    background: var(--bg); color: var(--ink);
+    font-family: var(--f-ui);
   }
 
   /* 周天铺满整个视口，作为底景 */
@@ -40,7 +54,10 @@
     -webkit-mask-composite: source-in;
     mask-image: var(--fade-top), var(--fade-right);
     mask-composite: intersect;
+    transition: opacity .6s var(--ease);
   }
+  /* 问 / 定：打字机退成铭文栏下面的底纹 */
+  body.xji-open #code { opacity: .22; }
 
   header {
     position: fixed; left: 24px; top: 20px; z-index: 2;

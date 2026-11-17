@@ -173,6 +173,12 @@ async def _timing(request: Request, call_next):
         metrics.record(request.method, request.url.path, 500, (time.perf_counter() - t0) * 1000)
         raise
     metrics.record(request.method, request.url.path, status, (time.perf_counter() - t0) * 1000)
+    # 页面和前端模块每次都向服务端核对一下（命中就是 304，不重传）。
+    # 不加这一行，浏览器按 Last-Modified 自行缓存，改完代码普通刷新仍可能跑旧模块。
+    path = request.url.path
+    if not path.startswith('/api') and 'cache-control' not in resp.headers and (
+            path.endswith(('.html', '.js', '.css')) or path.endswith('/')):
+        resp.headers['Cache-Control'] = 'no-cache'
     return resp
 
 

@@ -40,7 +40,7 @@ def _terms_for_flow_year(year: int) -> list[dict]:
 def year_report(birth: str, year: int, gender: int = 0,
                 longitude: float = 114.93, standard_longitude: float = 120.0) -> dict:
     snap = cal.chart_snapshot(birth, longitude, gender, standard_longitude)
-    dt = datetime.strptime(birth.strip().replace('T', ' '), '%Y-%m-%d %H:%M')
+    dt, _ = cal.parse_birth(birth)
     lam = cal.effective_longitude(longitude, standard_longitude)
     c = chart.build_chart(dt, longitude=lam, gender=gender)
     day_gan = c.bazi.split()[2][0]

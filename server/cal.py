@@ -31,6 +31,23 @@ def _fmt(dt):
     return dt.strftime('%Y-%m-%d %H:%M:%S') if isinstance(dt, datetime) else dt
 
 
+HOUR_UNKNOWN_NOTE = ('时辰不详：时柱未知，按午时暂排。旺衰、格局、用神里时柱那一份不作数，'
+                     '只按年、月、日三柱说；起运岁数也可能差几个月。')
+
+
+def parse_birth(birth: str) -> tuple[datetime, bool]:
+    """生辰串 → (钟表时间, 时辰是否已知)。
+
+    「YYYY-MM-DD HH:MM」是完整生辰；只给「YYYY-MM-DD」表示不知道几点生，按 12:00 暂排
+    （正午离子时换日最远，日柱不会因此错）。格式不对抛 ValueError。
+    """
+    s = (birth or '').strip().replace('T', ' ')
+    try:
+        return datetime.strptime(s, '%Y-%m-%d %H:%M'), True
+    except ValueError:
+        return datetime.strptime(s, '%Y-%m-%d').replace(hour=12), False
+
+
 def effective_longitude(longitude: float, standard_longitude: float = BEIJING) -> float:
     """把「出生地标准时」折成库能吃的经度。
 
@@ -131,7 +148,7 @@ def chart_snapshot(birth: str, longitude: float, gender: int = 0,
     birth 是**出生地钟表时间**（不是北京时间的换算值）。出生地所在时区的标准经线
     由 standard_longitude 给：中国 120，东京 135，纽约 -75。
     """
-    dt = datetime.strptime(birth.strip().replace('T', ' '), '%Y-%m-%d %H:%M')
+    dt, hour_known = parse_birth(birth)
     lam = effective_longitude(longitude, standard_longitude)
     c = chart.build_chart(dt, longitude=lam, gender=gender)
     s = strength.day_master_strength(c.quad, month_siling=c.siling)
@@ -151,7 +168,9 @@ def chart_snapshot(birth: str, longitude: float, gender: int = 0,
                   'standard_longitude': standard_longitude},
         'place': {'longitude': longitude, 'standard_longitude': standard_longitude,
                   'effective_longitude': round(lam, 4)},
-        'bazi': c.bazi,
+        # 时辰不详：时柱写成「？？」，免得模型和界面把暂排的那一柱当真
+        'bazi': c.bazi if hour_known else ' '.join(c.bazi.split()[:3] + ['？？']),
+        'hour_known': hour_known,
         'quad': plain(c.quad),
         'siling': c.siling,
         'true_solar': _fmt(c.solar),
@@ -174,7 +193,10 @@ def chart_snapshot(birth: str, longitude: float, gender: int = 0,
         out['ziwei'] = {'ming': zw['ming'], 'ju_name': zw['ju_name'], 'ming_zhu': zw['ming_zhu'],
                         'shen_zhu': zw['shen_zhu']}
 
-    out['warnings'] = [w for w in (dst.warning(dt), _tz_warning(longitude, standard_longitude)) if w]
+    out['warnings'] = [w for w in (dst.warning(dt) if hour_known else None,
+                                   _tz_warning(longitude, standard_longitude)) if w]
+    if not hour_known:
+        out['warnings'].insert(0, {'kind': 'hour_unknown', 'text': HOUR_UNKNOWN_NOTE})
     return out
 
 

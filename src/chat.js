@@ -33,14 +33,10 @@ function addMsg(role, text) {
   return div
 }
 
+// 生辰只认铭文栏一份口径（出生地不详 = 按时区经线，不另设默认经度）
 function readParams() {
-  const birth = $('#xji-b-date').value.trim()
-  const lonRaw = $('#xji-b-lon').value.trim()
-  const longitude = Number(lonRaw) || 114.93
-  const stdRaw = $('#xji-b-std').value.trim()
-  const standard_longitude = Number(stdRaw) === 0 ? 120 : (Number(stdRaw) || 120)
-  const gender = Number($('#xji-b-sex').value)
-  return { birth: birth || null, longitude, gender, standard_longitude }
+  const { birth, longitude, gender, standard_longitude, place_known } = panel.birthParams()
+  return { birth: birth || null, longitude, gender, standard_longitude, place_known }
 }
 
 async function loadNow() {
@@ -244,10 +240,11 @@ async function ask(text) {
   if (busy) return
   busy = true
   sendBtn.disabled = true
-  const { birth, longitude, gender, standard_longitude } = readParams()
+  const { birth, longitude, gender, standard_longitude, place_known } = readParams()
   // 复述确认：先说清这次用的是哪份输入，免得答的是别人
   // 同一份生辰只复述一次；换了生辰才再说
-  const echo = birth ? `${birth} · 东经 ${longitude}（时区经线 ${standard_longitude}）· ${gender ? '坤造' : '乾造'}` : ''
+  const echo = birth ? `${birth}${birth.length <= 10 ? ' · 时辰不知' : ''} · ` +
+    `${place_known ? `东经 ${longitude}（时区经线 ${standard_longitude}）` : '生地不详'} · ${gender ? '坤造' : '乾造'}` : ''
   // 换了一张盘：旧盘的问答不再带给模型，否则它会拿上一张盘的结论读这张（走查 P0-1）
   if (lastEcho && echo !== lastEcho) history.length = 0
   addMsg('user', text)

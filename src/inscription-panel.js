@@ -70,20 +70,53 @@ body.xji-open #xji {
   border-bottom: 1px solid var(--hair-1); }
 #xji-read em { color: rgba(231,225,211,.86); font-style: normal; }
 
-/* ---------- 起盘行：命令式，下划线输入 ---------- */
-#xji-birth { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 12px;
-  padding: 16px 0 4px; font: 10.5px/1.9 var(--f-mono); color: rgba(231,225,211,.42); }
+/* ---------- 起盘：一行标题 + 一排滚轮 ---------- */
+#xji-birth { padding: 14px 0 4px; font: 10.5px/1.9 var(--f-mono); color: rgba(231,225,211,.42); }
+.b-head { display: flex; align-items: baseline; gap: 8px 14px; flex-wrap: wrap; }
 .cmd-verb { font: 500 14px/1 var(--f-glyph); letter-spacing: .3em; color: var(--ink); margin-right: 2px; }
 .cmd-k { letter-spacing: .1em; }
+#xji-b-sum { display: none; font: 12px/1.6 var(--f-mono); color: rgba(231,225,211,.78); }
+#xji-b-edit { display: none; background: none; border: 0; border-bottom: 1px solid var(--hair-3); padding: 1px 0;
+  color: rgba(231,225,211,.55); font: 10.5px/1.4 var(--f-mono); cursor: pointer; }
+#xji-b-edit:hover { color: var(--ink); border-bottom-color: var(--hair-hi); }
 .u { background: none; border: 0; border-bottom: 1px solid var(--hair-3); border-radius: 0;
   color: var(--ink); font: 12px/1.6 var(--f-mono); padding: 1px 0 2px; outline: none;
   caret-color: var(--zhu); transition: border-color .2s; }
 .u:hover, .u:focus { border-bottom-color: var(--hair-hi); }
 .u::placeholder { color: rgba(231,225,211,.26); }
-#xji-b-date { width: 16.6ch; cursor: ns-resize; }
-#xji-b-date:focus { cursor: text; }
 #xji-b-lon { width: 6.6ch; }
 #xji-b-std { width: 3.6ch; }
+.lonbox { display: flex; gap: 8px 12px; align-items: baseline; padding-top: 6px; }
+.lonbox[hidden] { display: none; }
+
+/* 滚轮：五行可见，中间那一行是选中值。上下两根发丝线夹住它，远处的字渐隐 */
+.drums { --row: 26px; position: relative; display: flex; gap: 2px; margin-top: 24px; height: calc(var(--row) * 5); }
+.drums::before, .drums::after { content: ""; position: absolute; left: 0; right: 0; height: 1px;
+  background: var(--hair-2); pointer-events: none; }
+.drums::before { top: calc(var(--row) * 2); }
+.drums::after { top: calc(var(--row) * 3); }
+.drum { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; }
+.drum > i { font: 9px/1 var(--f-mono); font-style: normal; letter-spacing: .24em; color: rgba(231,225,211,.3);
+  text-align: center; height: 0; transform: translateY(-13px); }
+.drum ol { list-style: none; margin: 0; padding: calc(var(--row) * 2) 0; height: 100%; box-sizing: border-box;
+  overflow-y: auto; scroll-snap-type: y mandatory; overscroll-behavior: contain; scrollbar-width: none; outline: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 38%, #000 62%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 38%, #000 62%, transparent 100%); }
+.drum ol::-webkit-scrollbar { display: none; }
+.drum li { height: var(--row); line-height: var(--row); scroll-snap-align: center; text-align: center; cursor: pointer;
+  font: 12px/var(--row) var(--f-mono); color: rgba(231,225,211,.42); white-space: nowrap; transition: color .15s; }
+.drum li.on { color: var(--ink); font-size: 13px; }
+.drum li em { font: 11px/1 var(--f-glyph); font-style: normal; color: rgba(231,225,211,.36); margin-left: 3px; }
+.drum li.on em { color: var(--gold); }
+.drum ol:focus-visible li.on { color: var(--gold); }
+.drum.off li.on { color: rgba(231,225,211,.3); }
+.drum.wide { flex-grow: 1.35; }
+.drums.untouched li.on { color: rgba(231,225,211,.6); }
+
+/* 定：滚轮收成一行摘要，把高度让给对话 */
+body[data-layer="ding"] .drums, body[data-layer="ding"] .lonbox, body[data-layer="ding"] #xji-qi,
+body[data-layer="ding"] #xji-pre, body[data-layer="ding"] #xji-read { display: none; }
+body[data-layer="ding"] #xji-b-sum, body[data-layer="ding"] #xji-b-edit { display: inline; }
 .sex { white-space: nowrap; }
 .sex button { background: none; border: 0; padding: 0 1px; cursor: pointer;
   font: 13px/1 var(--f-glyph); letter-spacing: .12em; color: rgba(231,225,211,.34); transition: color .2s; }
@@ -101,11 +134,20 @@ body.xji-open #xji {
 #xji-pre b { font: 500 13px/1 var(--f-glyph); color: rgba(231,225,211,.86); letter-spacing: .08em; margin: 0 2px 0 4px; }
 #xji-pre .sep { color: rgba(242,237,224,.18); margin: 0 6px; }
 #xji-pre .warn { color: var(--zhu); }
+#xji-pre .soft { color: rgba(231,225,211,.55); }
 
 /* ---------- 定：命盘 ---------- */
 #xji-pan { padding: 16px 0 12px; border-bottom: 1px solid var(--hair-1); transition: opacity .4s; }
 #xji-pan[hidden] { display: none; }
 #xji-pan.stale { opacity: .35; }
+/* 对话开始后命盘收成一行；点它再展开 */
+.pan-mini { display: none; cursor: pointer; font: 10.5px/1.8 var(--f-mono); color: rgba(231,225,211,.5); }
+.pan-mini b { font: 500 15px/1 var(--f-glyph); color: var(--ink); letter-spacing: .06em; margin-right: 8px; }
+.pan-mini b.ri { color: var(--gold); }
+.pan-mini u { text-decoration: none; border-bottom: 1px solid var(--hair-3); margin-left: 10px; }
+#xji-pan.mini { padding: 9px 0 8px; }
+#xji-pan.mini .pan-cols, #xji-pan.mini .pan-rows { display: none; }
+#xji-pan.mini .pan-mini { display: block; }
 .pan-cols { display: grid; grid-template-columns: repeat(4, 58px); gap: 0 10px; margin-bottom: 12px; }
 .pan-col { text-align: center; animation: xji-in .7s var(--ease) both; }
 .pan-col i { display: block; font: 9.5px/1.6 var(--f-mono); font-style: normal; letter-spacing: .24em;
@@ -224,16 +266,22 @@ const HTML = `
   </div>
   <div id="xji-read">读数载入中…</div>
   <div id="xji-birth" role="group" aria-label="八字起盘">
-    <span class="cmd-verb">起八字</span>
-    <input id="xji-b-date" class="u" placeholder="1996-04-18 14:06" spellcheck="false" autocomplete="off"
-           title="滚轮拨动光标所指的年/月/日/时/分；↑↓ 同理；回车起盘" />
-    <span class="cmd-k">东经</span><input id="xji-b-lon" class="u" placeholder="114.93" inputmode="decimal" autocomplete="off" />
-    <span class="cmd-k">经线</span><input id="xji-b-std" class="u" value="120" inputmode="decimal" autocomplete="off" title="出生地时区的标准经线：中国 120，东京 135，纽约 -75" />
-    <span class="sex" role="radiogroup" aria-label="乾造或坤造"><button type="button" data-v="0" class="on" role="radio" aria-checked="true">乾造</button><i>｜</i><button type="button" data-v="1" role="radio" aria-checked="false">坤造</button></span>
+    <div class="b-head">
+      <span class="cmd-verb">起八字</span>
+      <span id="xji-b-sum"></span>
+      <button id="xji-b-edit" type="button" title="改生辰（Esc）">改</button>
+      <span class="sex" role="radiogroup" aria-label="性别"><button type="button" data-v="0" class="on" role="radio" aria-checked="true" title="乾造">男</button><i>｜</i><button type="button" data-v="1" role="radio" aria-checked="false" title="坤造">女</button></span>
+      <button id="xji-qi" class="zhu" type="button" title="排盘（回车）">起</button>
+    </div>
+    <div class="drums untouched" id="xji-drums"></div>
+    <div class="lonbox" hidden>
+      <span class="cmd-k">东经</span><input id="xji-b-lon" class="u" placeholder="如 114.06" inputmode="decimal" autocomplete="off" title="出生地经度，西经写负数" />
+      <span class="cmd-k">时区经线</span><input id="xji-b-std" class="u" value="120" inputmode="decimal" autocomplete="off" title="出生地时区的标准经线：中国 120，东京 135，纽约 -75" />
+    </div>
+    <input id="xji-b-date" type="hidden" value="" />
     <input id="xji-b-sex" type="hidden" value="0" />
-    <button id="xji-qi" class="zhu" type="button" title="排盘（回车）">起</button>
   </div>
-  <div id="xji-pre">滚轮拨年月日时 · 回车或「起」排盘</div>
+  <div id="xji-pre"></div>
   <div id="xji-pan" hidden></div>
   <div id="xji-log">
     <div class="m ai">铜环转着，字是死的。你要问什么，得先说完。</div>
@@ -286,9 +334,10 @@ function open() {
   if (w) { w.setMode('calm'); w.setView?.(MOBILE.matches ? MOBILE_VIEW : null) }
   setLayer('wen')
   openHooks.forEach((f) => f())
-  // 读过一次生辰就把预演接回来
-  if (dateEl.value.trim()) schedulePreview(0)
-  setTimeout(() => (dateEl.value.trim() ? $('#xji-input') : dateEl).focus({ preventScroll: true }), 260)
+  // 读过一次生辰就把预演接回来；隐藏字段可能被外部写过，先对齐滚轮
+  syncDrums()
+  schedulePreview(0)
+  setTimeout(() => (dateEl.value.trim() ? $('#xji-input') : drumsEl.querySelector('ol')).focus({ preventScroll: true }), 260)
 }
 
 function close() {
@@ -334,95 +383,172 @@ document.querySelectorAll('.sex button').forEach((b) => b.addEventListener('clic
   onBirthChange()
 }))
 
-// ---------------- 游标卡尺：滚轮 / ↑↓ 拨动光标所指的那一段 ----------------
-// 字符位置：0123-56-89 1112:1415
-const SEG = [[0, 4, 'y'], [5, 7, 'M'], [8, 10, 'd'], [11, 13, 'h'], [14, 16, 'm']]
-const RE = /^(\d{4})-(\d{1,2})-(\d{1,2})[ T]+(\d{1,2}):(\d{2})$/
+// ---------------- 滚轮：年 / 月 / 日 / 时 / 分 / 生地 ----------------
+// 一般人只记得年月日：时辰默认「不知」，生地默认「不详」。
+// 真正的数据仍在隐藏字段 #xji-b-date / #xji-b-lon / #xji-b-std 里（QA 脚本直接写它们），滚轮只往里写。
+const RE = /^(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T]+(\d{1,2}):(\d{2}))?$/
 const pad = (n, w = 2) => String(n).padStart(w, '0')
-const fmt = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
+const ZHI = '子丑丑寅寅卯卯辰辰巳巳午午未未申申酉酉戌戌亥亥子'
+// 省会、直辖市与港澳台。经度只用来校真太阳时，到城市一级足够
+const CITIES = [
+  ['北京', 116.40], ['上海', 121.47], ['天津', 117.20], ['重庆', 106.55], ['广州', 113.26], ['深圳', 114.06],
+  ['杭州', 120.16], ['南京', 118.80], ['武汉', 114.31], ['成都', 104.07], ['西安', 108.94], ['长沙', 112.94],
+  ['郑州', 113.62], ['济南', 117.00], ['沈阳', 123.43], ['哈尔滨', 126.63], ['长春', 125.32], ['石家庄', 114.51],
+  ['太原', 112.55], ['呼和浩特', 111.75], ['合肥', 117.23], ['福州', 119.30], ['南昌', 115.86], ['南宁', 108.37],
+  ['海口', 110.35], ['贵阳', 106.63], ['昆明', 102.83], ['兰州', 103.83], ['西宁', 101.78], ['银川', 106.23],
+  ['乌鲁木齐', 87.62], ['拉萨', 91.13], ['香港', 114.17], ['澳门', 113.54], ['台北', 121.56],
+]
+
+/* 一列滚轮。原生滚动 + scroll-snap（手机手指拨），鼠标滚轮一格只走一行，↑↓ 同理，点哪行选哪行。 */
+function makeDrum(host, label, { wide = false } = {}) {
+  const col = document.createElement('div')
+  col.className = 'drum' + (wide ? ' wide' : '')
+  col.innerHTML = `<i>${label}</i><ol tabindex="0" role="listbox" aria-label="${label}"></ol>`
+  host.appendChild(col)
+  const ol = col.querySelector('ol')
+  let items = [], idx = 0, settle = 0, acc = 0, onChange = () => {}
+  const row = () => ol.firstElementChild?.offsetHeight || 26
+  function paint() { [...ol.children].forEach((li, i) => { li.classList.toggle('on', i === idx); li.setAttribute('aria-selected', String(i === idx)) }) }
+  function pick(i, { smooth = true, silent = false } = {}) {
+    i = Math.max(0, Math.min(items.length - 1, i))
+    const changed = i !== idx
+    idx = i
+    paint()
+    ol.scrollTo({ top: i * row(), behavior: smooth ? 'smooth' : 'instant' })
+    if (changed && !silent) onChange(items[i].v, true)
+  }
+  ol.addEventListener('scroll', () => {
+    clearTimeout(settle)
+    settle = setTimeout(() => {
+      const i = Math.round(ol.scrollTop / row())
+      if (i !== idx && items[i]) { idx = i; paint(); onChange(items[i].v, true) }
+    }, 90)
+  }, { passive: true })
+  ol.addEventListener('wheel', (e) => {
+    e.preventDefault()
+    // 鼠标滚一格（约 100px 或 3 行）走一行，一次滚多格就走多行；触控板很碎，攒够 30 再走
+    const unit = e.deltaMode === 1 ? 3 : e.deltaMode === 2 ? 1 : 100
+    if (e.deltaMode !== 0 || Math.abs(e.deltaY) >= 50) {
+      acc = 0
+      pick(idx + Math.sign(e.deltaY) * Math.max(1, Math.round(Math.abs(e.deltaY) / unit)))
+      return
+    }
+    acc += e.deltaY
+    if (Math.abs(acc) >= 30) { pick(idx + (acc > 0 ? 1 : -1)); acc = 0 }
+  }, { passive: false })
+  ol.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); pick(idx + (e.key === 'ArrowDown' ? 1 : -1)) }
+    else if (e.key === 'PageDown' || e.key === 'PageUp') { e.preventDefault(); pick(idx + (e.key === 'PageDown' ? 10 : -10)) }
+    else if (e.key === 'Enter') { e.preventDefault(); qi() }
+  })
+  ol.addEventListener('click', (e) => {
+    const li = e.target.closest('li')
+    if (li) pick([...ol.children].indexOf(li))
+  })
+  return {
+    col,
+    get value() { return items[idx]?.v },
+    onChange(fn) { onChange = fn },
+    setItems(list, keep) {
+      items = list
+      ol.innerHTML = list.map((it) => `<li role="option">${it.html ?? it.label}</li>`).join('')
+      const j = list.findIndex((it) => it.v === keep)
+      idx = j >= 0 ? j : Math.min(idx, list.length - 1)
+      paint()
+      requestAnimationFrame(() => { ol.scrollTop = idx * row() })
+    },
+    set(v) { const j = items.findIndex((it) => it.v === v); if (j >= 0) pick(j, { smooth: false, silent: true }) },
+    set off(b) { col.classList.toggle('off', !!b) },
+  }
+}
+
+const drumsEl = $('#xji-drums')
+const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i)
+const dY = makeDrum(drumsEl, '年', { wide: true })
+const dM = makeDrum(drumsEl, '月')
+const dD = makeDrum(drumsEl, '日')
+const dH = makeDrum(drumsEl, '时', { wide: true })
+const dMi = makeDrum(drumsEl, '分')
+const dP = makeDrum(drumsEl, '生地', { wide: true })
+dY.setItems(range(1900, 2100).map((v) => ({ v, label: String(v) })), 1990)
+dM.setItems(range(1, 12).map((v) => ({ v, label: `${v}月` })), 1)
+dH.setItems([{ v: -1, label: '不知' }, ...range(0, 23).map((v) => ({ v, html: `${pad(v)}<em>${ZHI[v]}</em>` }))], -1)
+dMi.setItems(range(0, 59).map((v) => ({ v, label: pad(v) })), 0)
+dP.setItems([{ v: '', label: '不详' }, ...CITIES.map(([n, lon]) => ({ v: String(lon), label: n })), { v: 'custom', label: '自填' }], '')
+const lonBox = $('.lonbox')
+
+function fillDays(keep) {
+  const n = new Date(dY.value, dM.value, 0).getDate()
+  dD.setItems(range(1, n).map((v) => ({ v, label: `${v}日` })), Math.min(keep ?? dD.value ?? 1, n))
+}
+fillDays(1)
+
+// 滚轮 → 隐藏字段
+function writeDate() {
+  drumsEl.classList.remove('untouched')
+  const h = dH.value
+  dMi.off = h < 0
+  dateEl.value = `${dY.value}-${pad(dM.value)}-${pad(dD.value)}` + (h < 0 ? '' : ` ${pad(h)}:${pad(dMi.value)}`)
+  onBirthChange()
+}
+dY.onChange(() => { fillDays(); writeDate() })
+dM.onChange(() => { fillDays(); writeDate() })
+dD.onChange(writeDate)
+dH.onChange(writeDate)
+dMi.onChange(() => { if (dH.value < 0) dH.set(12); writeDate() })
+dP.onChange((v) => {
+  lonBox.hidden = v !== 'custom'
+  if (v !== 'custom') { lonEl.value = v; stdEl.value = '120' } else lonEl.focus({ preventScroll: true })
+  onBirthChange()
+})
+dMi.off = true
+
+// 隐藏字段 → 滚轮（打开时、或外部脚本直接写了值）
+function syncDrums() {
+  const m = RE.exec(dateEl.value.trim())
+  if (m) {
+    const [y, M, d, h, mi] = m.slice(1).map((x) => (x === undefined ? undefined : Number(x)))
+    dY.set(y); dM.set(M); fillDays(d); dD.set(d)
+    dH.set(h === undefined ? -1 : h); dMi.set(mi ?? 0); dMi.off = h === undefined
+    drumsEl.classList.remove('untouched')
+  }
+  const lon = lonEl.value.trim()
+  const city = CITIES.find(([, l]) => String(l) === lon)
+  dP.set(!lon ? '' : city && stdEl.value.trim() === '120' ? lon : 'custom')
+  lonBox.hidden = dP.value !== 'custom'
+}
+
+dateEl.addEventListener('input', () => { syncDrums(); onBirthChange() })
+for (const el of [lonEl, stdEl]) {
+  el.addEventListener('input', onBirthChange)
+  el.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); qi() } })
+}
+$('#xji-b-edit').addEventListener('click', () => { unsettle(); drumsEl.querySelector('ol')?.focus({ preventScroll: true }) })
 
 function parse(s) {
   const m = RE.exec((s || '').trim())
   if (!m) return null
-  const [y, M, d, h, mi] = m.slice(1).map(Number)
+  const [y, M, d, h = 12, mi = 0] = m.slice(1).map((x) => (x === undefined ? undefined : Number(x)))
   const dt = new Date(y, M - 1, d, h, mi)
   if (dt.getFullYear() !== y || dt.getMonth() !== M - 1 || dt.getDate() !== d || h > 23 || mi > 59) return null
   return dt
 }
 
-function bump(dt, unit, n) {
-  const d = new Date(dt)
-  if (unit === 'y' || unit === 'M') {
-    // 年、月按日历拨，日子溢出就贴到月末（1 月 31 日 +1 月 = 2 月 28/29 日）
-    const day = d.getDate()
-    d.setDate(1)
-    if (unit === 'y') d.setFullYear(d.getFullYear() + n); else d.setMonth(d.getMonth() + n)
-    d.setDate(Math.min(day, new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate()))
-  } else {
-    d.setTime(d.getTime() + n * { d: 864e5, h: 36e5, m: 6e4 }[unit])
-  }
-  const y = d.getFullYear()
-  return y < 1900 || y > 2100 ? dt : d
-}
-
-let cw = 0
-function charWidth() {
-  if (cw) return cw
-  const cs = getComputedStyle(dateEl)
-  const ctx = document.createElement('canvas').getContext('2d')
-  ctx.font = `${cs.fontSize} ${cs.fontFamily}`
-  return (cw = ctx.measureText('0000000000').width / 10)
-}
-function segByChar(i) {
-  let best = SEG[0], bd = Infinity
-  for (const s of SEG) { const c = (s[0] + s[1]) / 2, dd = Math.abs(i + .5 - c); if (dd < bd) { bd = dd; best = s } }
-  return best
-}
-function segAtX(clientX) {
-  const r = dateEl.getBoundingClientRect()
-  const x = clientX - r.left - parseFloat(getComputedStyle(dateEl).paddingLeft || 0) + dateEl.scrollLeft
-  return segByChar(Math.floor(x / charWidth()))
-}
-
-function dial(seg, n) {
-  const cur = parse(dateEl.value) || parse(dateEl.placeholder)
-  dateEl.value = fmt(bump(cur, seg[2], n))
-  if (document.activeElement === dateEl) dateEl.setSelectionRange(seg[0], seg[1])
-  onBirthChange()
-}
-
-let wheelAcc = 0
-dateEl.addEventListener('wheel', (e) => {
-  e.preventDefault()
-  const seg = segAtX(e.clientX)
-  // 鼠标滚一格（deltaY 约 100，或按行计）就拨一下；触控板很碎，攒够 40 再拨
-  if (e.deltaMode !== 0 || Math.abs(e.deltaY) >= 50) { wheelAcc = 0; dial(seg, e.deltaY < 0 ? 1 : -1); return }
-  wheelAcc += e.deltaY
-  if (Math.abs(wheelAcc) >= 40) { dial(seg, wheelAcc < 0 ? 1 : -1); wheelAcc = 0 }
-}, { passive: false })
-
-dateEl.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-    e.preventDefault()
-    const seg = segByChar(Math.max(0, (dateEl.selectionStart ?? 0) - (dateEl.selectionStart === dateEl.selectionEnd ? 1 : 0)))
-    dial(seg, e.key === 'ArrowUp' ? 1 : -1)
-  } else if (e.key === 'Enter') {
-    e.preventDefault()
-    qi()
-  }
-})
-dateEl.addEventListener('input', onBirthChange)
-for (const el of [lonEl, stdEl]) {
-  el.addEventListener('input', onBirthChange)
-  el.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); qi() } })
-}
-
 // ---------------- 预演：拨到哪，环就转到哪 ----------------
+// 东经：空 = 出生地不详，按时区经线算（不校真太阳时）；0 是合法经度，不当成「没填」
 function birthParams() {
   const birth = dateEl.value.trim()
-  const longitude = Number(lonEl.value.trim()) || 114.93
   const std = Number(stdEl.value.trim())
-  return { birth, longitude, standard_longitude: std === 0 ? 120 : (std || 120), gender: Number(sexEl.value) || 0 }
+  const standard_longitude = stdEl.value.trim() === '' || !Number.isFinite(std) ? 120 : std
+  const lonRaw = lonEl.value.trim()
+  const longitude = lonRaw === '' || !Number.isFinite(Number(lonRaw)) ? standard_longitude : Number(lonRaw)
+  return { birth, longitude, standard_longitude, gender: Number(sexEl.value) || 0, place_known: lonRaw !== '' }
+}
+function badPlace(p) {
+  if (lonEl.value.trim() !== '' && !Number.isFinite(Number(lonEl.value.trim()))) return '东经要填数字'
+  if (Math.abs(p.longitude) > 180) return '经度越界：应在 -180 到 180 之间'
+  if (Math.abs(p.standard_longitude) > 180) return '时区经线越界：应在 -180 到 180 之间'
+  return ''
 }
 
 async function fetchChart(p) {
@@ -434,6 +560,8 @@ async function fetchChart(p) {
 }
 
 const PILLAR = ['年', '月', '日', '时']
+const HINT = '拨到你的生日 · 几点生不知道就留「不知」，出生地不知道就留「不详」'
+const WARN = { dst: '夏令时', tz: '时区?', hour_unknown: '时辰不详 · 时柱不排' }
 const escape = (s) => String(s ?? '').replace(/[<>&"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]))
 
 let seq = 0, timer = 0, lastChart = null
@@ -448,17 +576,21 @@ function onBirthChange() {
 async function preview() {
   const p = birthParams()
   const w = wheel()
-  if (!p.birth) { seq++; pre.textContent = '滚轮拨年月日时 · 回车或「起」排盘'; w?.turnTo?.(RING, null); return }
+  if (!p.birth) { seq++; pre.textContent = HINT; w?.turnTo?.(RING, null); return }
   if (!parse(p.birth)) { seq++; pre.innerHTML = `<span class="warn">${badDate(p.birth)}</span>`; return }
+  const bp = badPlace(p)
+  if (bp) { seq++; pre.innerHTML = `<span class="warn">${bp}</span>`; return }
   const my = ++seq
   try {
     const c = await fetchChart(p)
     if (my !== seq) return
     lastChart = { key: JSON.stringify(p), chart: c }
     const ps = c.bazi.split(' ')
+    const notes = (c.warnings || []).map((x) => WARN[x.kind] || x.kind)
+    if (!p.place_known) notes.push('生地不详 · 按北京时间')
     pre.innerHTML = '预演' + ps.map((g, i) => `<span class="sep">/</span>${PILLAR[i]}<b>${escape(g)}</b>`).join('') +
-      `<span class="sep">/</span>真太阳 ${escape((c.true_solar || '').slice(11, 16))}` +
-      (c.warnings && c.warnings.length ? `<span class="sep">/</span><span class="warn">${c.warnings.map((x) => x.kind === 'dst' ? '夏令时' : x.kind === 'tz' ? '时区?' : x.kind).join(' ')}</span>` : '')
+      (c.hour_known === false ? '' : `<span class="sep">/</span>真太阳 ${escape((c.true_solar || '').slice(11, 16))}`) +
+      (notes.length ? `<span class="sep">/</span><span class="soft">${escape(notes.join(' · '))}</span>` : '')
     // 日柱是日主：转到正前方
     if (w && layer === 'wen') w.turnTo?.(RING, w.indexOf(RING, ps[2]))
   } catch (e) {
@@ -484,16 +616,31 @@ function renderPan(c) {
       row('今年', cur.year_gz ? `${escape(cur.year_gz)}${cur.dayun ? ' · 运 ' + escape(cur.dayun) : ''}` : '') +
       (c.warnings || []).map((w) => `<div class="warn">${escape(w.text || (w.kind === 'dst' ? `夏令时 +${w.offset_minutes} 分` : w.kind))}</div>`).join('') +
     `</div>`
-  pan.classList.remove('stale')
+  // 对话开始后收成的那一行
+  pan.insertAdjacentHTML('beforeend', `<div class="pan-mini" title="展开命盘">` +
+    ps.map((p, i) => `<b${i === 2 ? ' class="ri"' : ''}>${escape(p)}</b>`).join('') +
+    `${escape([st.label, g.name].filter(Boolean).join(' · '))}<u>展开</u></div>`)
+  pan.classList.remove('stale', 'mini')
   pan.hidden = false
+  const [, y0, M0, d0, h0, mi0] = RE.exec(c.input?.birth || '') || []
+  const place = dP.value === 'custom' ? `东经 ${c.place?.longitude}` : dP.value ? dP.col.querySelector('li.on')?.textContent : '生地不详'
+  $('#xji-b-sum').textContent = y0 ? `${y0}年${+M0}月${+d0}日 · ${h0 === undefined ? '时辰不知' : `${h0}:${mi0}`} · ${place}` : ''
 }
+// 问话时命盘收成一行，把高度让给对话；点那一行再展开
+pan.addEventListener('click', (e) => {
+  if (pan.classList.contains('mini')) pan.classList.remove('mini')
+  else if (e.target.closest('.pan-cols')) pan.classList.add('mini')
+})
+$('#xji-input').addEventListener('focus', () => { if (!pan.hidden) pan.classList.add('mini') })
 
 async function qi() {
   // 按钮 disabled 拦不住回车，所以另设一把锁
   if (qiBusy) return
   const p = birthParams()
-  if (!p.birth) { pre.innerHTML = '<span class="warn">先报生辰：YYYY-MM-DD HH:MM</span>'; dateEl.focus(); return }
-  if (!parse(p.birth)) { pre.innerHTML = `<span class="warn">${badDate(p.birth)}</span>`; dateEl.focus(); return }
+  const focusDrums = () => drumsEl.querySelector('ol')?.focus({ preventScroll: true })
+  if (!p.birth) { pre.innerHTML = '<span class="warn">先拨到你的生日（年、月、日）</span>'; focusDrums(); return }
+  if (!parse(p.birth)) { pre.innerHTML = `<span class="warn">${badDate(p.birth)}</span>`; focusDrums(); return }
+  if (badPlace(p)) { pre.innerHTML = `<span class="warn">${badPlace(p)}</span>`; lonEl.focus(); return }
   // 已经定在这张盘上：再按「起」什么也不做，免得璇玑把同一张盘念两遍
   if (layer === 'ding' && dingKey === JSON.stringify(p)) return
   if (!document.body.classList.contains('xji-open')) open()
@@ -529,7 +676,7 @@ async function qi() {
 }
 // 格式错和「没有这一天」分开说
 function badDate(s) {
-  return RE.test(String(s).trim()) ? '没有这一天（日期或时刻越界）' : '格式：YYYY-MM-DD HH:MM'
+  return RE.test(String(s).trim()) ? '没有这一天（日期或时刻越界）' : '格式：YYYY-MM-DD 或 YYYY-MM-DD HH:MM'
 }
 qiBtn.addEventListener('click', qi)
 

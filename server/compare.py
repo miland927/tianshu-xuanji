@@ -10,7 +10,7 @@ from typing import Any
 
 from tianzhi_core.bazi import chart, geju, strength, yongshen
 
-from .cal import BEIJING, effective_longitude
+from .cal import BEIJING, effective_longitude, parse_birth
 
 # 三个真实存在的分歧点，各自都有典籍依据
 VARIANTS: list[dict[str, Any]] = [
@@ -49,7 +49,7 @@ FIELDS = [('四柱', 'bazi'), ('旺衰', 'strength'), ('格局', 'geju'), ('用�
 
 
 def _one(birth: str, longitude: float, gender: int, std: float, params: dict) -> dict:
-    dt = datetime.strptime(birth.strip().replace('T', ' '), '%Y-%m-%d %H:%M')
+    dt, hour_known = parse_birth(birth)
     lam = effective_longitude(longitude, std)
     c = chart.build_chart(dt, longitude=lam, gender=gender,
                           late_zi=params['late_zi'], use_true_solar=params['use_true_solar'])
@@ -57,7 +57,7 @@ def _one(birth: str, longitude: float, gender: int, std: float, params: dict) ->
     g = geju.month_pattern(c.quad, month_siling=c.siling)
     y = yongshen.select(c.quad, month_siling=c.siling, priority=params['priority'])
     return {
-        'bazi': c.bazi,
+        'bazi': c.bazi if hour_known else ' '.join(c.bazi.split()[:3] + ['？？']),
         'strength': f"{s.label} {s.ratio:.3f}",
         'geju': g.name,
         'yong': y.yong, 'xi': y.xi, 'ji': y.ji,

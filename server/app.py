@@ -24,7 +24,7 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from . import audit, breaker, cal, compare, cost, evidence, metrics
+from . import audit, breaker, cal, compare, cost, evidence, metrics, zh
 from .guard import StreamGuard
 from .persona import detect_risk, system_prompt
 
@@ -420,7 +420,7 @@ async def chat(inp: ChatIn, request: Request):
         out: list[str] = []
         violations: list[dict] = []
         status = 'ok'
-        sys_digest = audit._digest(system_prompt(json.dumps(ctx, ensure_ascii=False, default=str), risk))
+        sys_digest = audit._digest(system_prompt(json.dumps(zh.model_view(ctx), ensure_ascii=False, default=str), risk))
 
         def _degraded(reason: str) -> list[str]:
             """上游坏了也不留白：降级成「只念读数」。"""
@@ -458,7 +458,7 @@ async def chat(inp: ChatIn, request: Request):
                 'stream_options': {'include_usage': True},
                 'temperature': 0.6,
                 'max_tokens': 1200,
-                'messages': [{'role': 'system', 'content': system_prompt(json.dumps(ctx, ensure_ascii=False, default=str), risk)}]
+                'messages': [{'role': 'system', 'content': system_prompt(json.dumps(zh.model_view(ctx), ensure_ascii=False, default=str), risk)}]
                             + [{'role': m.role, 'content': m.content} for m in inp.messages[-12:]],
             }
             guard = StreamGuard()
@@ -507,6 +507,7 @@ async def chat(inp: ChatIn, request: Request):
                         if not delta:
                             continue
                         safe, bad = guard.push(delta)
+                        safe = zh.scrub(safe)
                         if bad:
                             violations.extend(bad)
                             metrics.bump('guard_hit', len(bad))
@@ -516,6 +517,7 @@ async def chat(inp: ChatIn, request: Request):
                             yield _sse('delta', {'text': safe})
                     cost.LEDGER.record(usage)
             safe, bad = guard.flush()
+            safe = zh.scrub(safe)
             if bad:
                 violations.extend(bad)
                 yield _sse('violation', bad)

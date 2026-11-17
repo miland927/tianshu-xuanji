@@ -23,6 +23,8 @@ function scrollEnd() {
 }
 
 const escape = (s) => s.replace(/[<>&]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]))
+// 人设要求纯文本，但模型偶尔还会写 **定性**：成对的渲染成粗体，落单的（流式写到一半）先藏起来
+const render = (s) => escape(s).replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>').replace(/\*\*/g, '')
 
 function addMsg(role, text) {
   const div = document.createElement('div')
@@ -297,7 +299,7 @@ async function ask(text) {
         if (!ev || !dataLine) continue
         const data = JSON.parse(dataLine)
         if (ev === 'meta') { metaState = data; paintMeta(metaState); applyFocus(data.focus) }
-        else if (ev === 'delta') { acc += data.text; bubble.textContent = acc; scrollEnd() }
+        else if (ev === 'delta') { acc += data.text; bubble.innerHTML = render(acc); scrollEnd() }
         else if (ev === 'degraded') {
           metaState = { ...metaState, degraded: data.reason }
           paintMeta(metaState)

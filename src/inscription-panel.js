@@ -168,6 +168,7 @@ body[data-layer="ding"] #xji-b-sum, body[data-layer="ding"] #xji-b-edit { displa
   scrollbar-width: thin; scrollbar-color: rgba(242,237,224,.14) transparent; }
 #xji-log .m { font: 14px/1.95 var(--f-glyph); color: rgba(231,225,211,.86); white-space: pre-wrap; }
 #xji-log .m.me { font: 12px/1.8 var(--f-ui); color: var(--ink-dim); }
+#xji-log .m.ai b { font-weight: 500; color: var(--ink); }
 #xji-log .m.me::before { content: "问　"; color: rgba(242,237,224,.3); }
 #xji-log .m.sys { font: 9.5px/1.6 var(--f-mono); color: rgba(231,225,211,.4); letter-spacing: .04em; }
 #xji-log .m.sys::before { content: "以　"; color: rgba(231,225,211,.28); }

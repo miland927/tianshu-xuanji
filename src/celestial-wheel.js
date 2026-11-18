@@ -100,6 +100,8 @@ export function createCelestialWheel(host, { onFocus, plate } = {}) {
   let focusList = []
   const focusSet = new Set(), locked = new Map()
   let tempo = 1, tempoT = 1, view = null, bloomS = .38
+  // 定：俯看整圈被点亮的环，并把环心挪到画面上没被遮住的那块（frame.rect 是屏幕比例 [左,上,右,下]）
+  let frameT = null, offX = 0, offY = 0
   const camPos = new THREE.Vector3(), camLook = new THREE.Vector3()
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2()
 
@@ -159,9 +161,32 @@ export function createCelestialWheel(host, { onFocus, plate } = {}) {
     const fly = primary && landing
     if (fly) { const R = primary.userData.ring; const r = R.r * (1 + R.boost) * breath; camLook.set(0, 0, r - .2); camPos.set(0, 2.6, r + 3.1) }
     else if (landing) { const o = now * .07; camPos.set(Math.sin(o) * 9.8 * k * zoom, (14 * (1 - k) + (3.4 + Math.sin(now * .11) * 1.6) * k) * zoom, (.001 * (1 - k) + Math.cos(o) * 9.8 * k) * zoom); camLook.set(0, 0, 0) }
+    else if (frameT && primary) {
+      const R = byKey[frameT.ring] || primary.userData.ring
+      const W = host.clientWidth, H = host.clientHeight
+      const [l, t, r, b] = typeof frameT.rect === 'function' ? frameT.rect() : frameT.rect
+      const th = frameT.tilt ?? .7                       // 离竖直的角：0 = 正俯视
+      const rr = (R.r + R.w * .9) * (1 + R.boost) * breath * (frameT.margin ?? 1.1)
+      const tanV = Math.tan(camera.fov * Math.PI / 360)
+      // 环看成椭圆：横向直径 2rr，纵向被俯角压成 2rr·cosθ；两个方向都要放进可用区
+      const d = Math.max(2 * rr / Math.max(1, (r - l) * W), 2 * rr * Math.cos(th) / Math.max(1, (b - t) * H)) * H / (2 * tanV)
+      camPos.set(0, d * Math.cos(th), d * Math.sin(th)); camLook.set(0, 0, 0)
+    }
     else if (view) { const o = now * .05; camPos.set(view.pos[0] + Math.sin(o) * .6, view.pos[1], view.pos[2] + Math.cos(o) * .3); camLook.set(...view.look) }
     else { const o = now * .05; camPos.set(-4.8 + Math.sin(o) * 1.2, 4.2, 9.5 + Math.cos(o) * .6); camLook.set(-3.8, .2, 0) } // calm：盘偏右，左侧留白
     camera.position.lerp(camPos, L(fly ? .06 : landing ? .1 : .05)); camera.lookAt(camLook)
+    // 画面平移：环心对准可用区中心（用投影偏移，不斜着看）
+    {
+      const W = host.clientWidth, H = host.clientHeight
+      let ox = 0, oy = 0
+      if (frameT && primary && !landing) {
+        const [l, t, r, b] = typeof frameT.rect === 'function' ? frameT.rect() : frameT.rect
+        ox = W / 2 - (l + r) / 2 * W; oy = H / 2 - (t + b) / 2 * H
+      }
+      offX += (ox - offX) * L(.06); offY += (oy - offY) * L(.06)
+      if (Math.abs(offX) + Math.abs(offY) > .5) camera.setViewOffset(W, H, offX, offY, W, H)
+      else if (camera.view && camera.view.enabled) camera.clearViewOffset()
+    }
     // 各环
     const dimBase = landing ? 1 : .36
     const multi = focusList.length > 1
@@ -229,6 +254,13 @@ export function createCelestialWheel(host, { onFocus, plate } = {}) {
       return focusList.length
     },
     get focused() { return focusList.map(cellInfo) },
+    // 定层机位：{ ring, rect:[l,t,r,b] 或返回它的函数, tilt, margin }；null 回到原机位
+    setFrame(f) { frameT = f && f.rect ? { ...f } : null },
+    // 自检：点亮格此刻在屏幕上的像素坐标
+    get litScreen() {
+      const W = host.clientWidth, H = host.clientHeight, v = new THREE.Vector3()
+      return focusList.map((c) => { c.getWorldPosition(v).project(camera); return { label: c.userData.item.label, x: Math.round((v.x + 1) / 2 * W), y: Math.round((1 - v.y) / 2 * H), behind: v.z > 1 } })
+    },
     // 把某一格平滑转到正前方（不点亮、不锁环）；index 传 null 放手，环恢复自转
     turnTo(ringKey, index) {
       const R = byKey[ringKey]; if (!R) return false

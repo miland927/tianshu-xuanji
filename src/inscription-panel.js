@@ -311,6 +311,13 @@ const RING = '六十甲子'
 const MOBILE = matchMedia('(max-width: 640px)')
 // 竖屏时盘在上方居中，铭文栏在下
 const MOBILE_VIEW = { pos: [0, 12.5, 6.2], look: [0, 0, 2.4] }
+// 「定」时盘该落在哪：桌面是铭文栏右边，竖屏是铭文栏上面、标题下面（屏幕比例 [左,上,右,下]）
+function freeRect() {
+  const r = $('#xji')?.getBoundingClientRect()
+  if (!r || !innerWidth || !innerHeight) return [0, 0, 1, 1]
+  if (MOBILE.matches) return [.03, .085, .97, Math.max(.2, r.top / innerHeight)]
+  return [Math.min(.6, (r.right - 40) / innerWidth), .1, .98, .95]
+}
 
 const dateEl = $('#xji-b-date'), lonEl = $('#xji-b-lon'), stdEl = $('#xji-b-std'), sexEl = $('#xji-b-sex')
 const pre = $('#xji-pre'), pan = $('#xji-pan'), qiBtn = $('#xji-qi')
@@ -345,7 +352,7 @@ function close() {
   qiSeq++; seq++; clearTimeout(timer)
   document.body.classList.remove('xji-open')
   const w = wheel()
-  if (w) { w.turnTo?.(RING, null); w.setView?.(null); w.setMode('landing') }
+  if (w) { w.setFrame?.(null); w.turnTo?.(RING, null); w.setView?.(null); w.setMode('landing') }
   setLayer('guan')
   $('#xji-trigger').focus({ preventScroll: true })
 }
@@ -354,6 +361,7 @@ function close() {
 function unsettle() {
   qiSeq++
   if (layer !== 'ding') return
+  wheel()?.setFrame?.(null)
   wheel()?.leave()
   pan.classList.add('stale')
   setLayer('wen')
@@ -663,6 +671,7 @@ async function qi() {
         ? w.setFocus([2, 0, 1, 3].map((i) => ({ ring: RING, index: w.indexOf(RING, ps[i]) })).filter((f) => f.index >= 0))
         : 0
       document.body.dataset.lit = `${RING}:${ps.join(',')}:${lit}`
+      w.setFrame?.({ ring: RING, rect: freeRect, tilt: MOBILE.matches ? .9 : .72 })
     }
     setLayer('ding')
     dingKey = key
